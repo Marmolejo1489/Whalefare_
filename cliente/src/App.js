@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from 'react'
-import Add from './Add'
+import React from 'react'
 import Axios from 'axios';
-import Password from './Password';
 import Login from './Login';
 import Signup from './Signup';
+import Logout from './Logout';
+import Home from './Home'
+
+//import Alert from './components/Alert';
 
 import {
     BrowserRouter as Router,
@@ -13,21 +15,8 @@ import {
 } from 'react-router-dom'
 
 function App() {
-    const [passwordList, setPasswordList] = useState([]);
 
-    useEffect(() => {
-        Axios.get('http://localhost:4000/home').then((response) => {
-            setPasswordList(response.data);
-        })
-    }, []);
-
-    const decryptedPassword = (encryption) => {
-        Axios.post('http://localhost:4000/decryptpass', { password: encryption.password, iv: encryption.iv }).then((response) => {
-            setPasswordList(passwordList.map((val) => {
-                return val.id_c === encryption.id ? { id: val.id_c, pass_c: val.pass_c, nombre: response.data, website_c: val.website_c, name_u: val.user_c, iv: val.key_c } : val;
-            }));
-        });
-    };
+    Axios.defaults.withCredentials = true;
 
     return (
         <Router>
@@ -51,33 +40,26 @@ function App() {
                             <li className="nav-item">
                                 <div className="nav-link" aria-current="page"><NavLink to="/signup" activeClassName="active">Registrarme</NavLink></div>
                             </li>
+                            <li className="nav-item">
+                                <div className="nav-link" aria-current="page"><NavLink to="/logout" activeClassName="active">Cerrar sesión</NavLink></div>
+                            </li>
                         </ul>
                     </div>
                 </div>
             </nav>
             <Switch>
+                <Route path="/logout">
+                    <Logout />
+                </Route>
                 <Route path="/login">
-                    <Login/>
+                    <Login />
                 </Route>
                 <Route path="/signup">
-                    <Signup/>
+
+                    <Signup />
                 </Route>
                 <Route path="/home">
-                    <div className="Passwords">
-                        <div className="container p-4">
-                            <div className="row row-cols-3">
-                                {passwordList.map((val, key) => {
-                                    return (
-                                        <div key={key} onClick={() => { decryptedPassword({ password: val.pass_c, iv: val.key_c, id: val.id_c }) }}>
-                                            <Password {...val} />
-                                            <br />
-                                        </div>
-                                    )
-                                })}
-                                <Add />
-                            </div>
-                        </div>
-                    </div>
+                    <Home/>
                 </Route>
             </Switch>
         </Router>
