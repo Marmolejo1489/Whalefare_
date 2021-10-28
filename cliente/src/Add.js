@@ -8,12 +8,20 @@ function Add() {
   const [Domain, setDomain] = useState("");
 
   const addPassword = () => {
-    Axios.post("http://localhost:4000/add", {
-      user_c: User,
-      pass_c: Password,
-      website_c: Domain
+    Axios.get('http://localhost:4000/login').then((response) => {
+      if (response.data.user) {
+        var id_u = response.data.user[0].id_u;
+        
+        Axios.post("http://localhost:4000/add", {
+          user_c: User,
+          pass_c: Password,
+          website_c: Domain,
+          id_u: id_u
+        });
+      }
     });
-    window.location.reload();
+
+
   };
 
   return (
