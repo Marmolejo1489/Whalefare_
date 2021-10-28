@@ -24,7 +24,7 @@ router.post('/signup', (req, res) => {
                 }
             });
     });
-    res.redirect('/login');
+
 });
 
 router.get('/login', (req, res) => {
