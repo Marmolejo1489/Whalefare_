@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Axios from 'axios';
 
 function Login() {
@@ -7,50 +7,69 @@ function Login() {
     const [User, setUser] = useState("");
     const [Email, setEmail] = useState("");
 
-    const addUser = () => {
+    const [loginStatus, setLoginStatus] = useState("");
+
+    const logUser = () => {
         Axios.post("http://localhost:4000/login", {
-            name_u: User,
+            user_u: User,
             pass_u: Password,
             email_u: Email
+        }).then((response) => {
+            if (response.data.message) {
+                setLoginStatus(response.data.message);
+            } else {
+                setLoginStatus("Bienvenido, " + response.data[0].user_u);
+            }
+            
         });
-
     };
+
+    useEffect(() => {
+        Axios.get('http://localhost:4000/login').then((response) => {
+            if(response.data.user){
+            setLoginStatus("Bienvenido, " + response.data.user[0].user_u);
+            }
+        });
+    }, []);
 
     return (
 
-        <div class="containerr2">
-            <form >
-                <h1>Iniciar sesión</h1>
-                <div class="container">
-                    <label>Nombre de usuario</label>
-                    <div class="input-container">
-                        <input type="text" id="pass" class="text_area" placeholder="Escribe aquí."
-                            onChange={(event) => {
-                                setUser(event.target.value);
-                            }} />
-                    </div>
-                    <label>Correo electrónico</label>
-                    <div class="input-container">
-                        <input type="email" id="pass" class="text_area" placeholder="Escribe aquí."
-                            onChange={(event) => {
-                                setEmail(event.target.value);
-                            }} />
-                    </div>
-                    <label>Contraseña</label>
-                    <div class="input-container">
-                        <input type="password" id="pass" class="text_area" placeholder="Escribe aquí."
-                            onChange={(event) => {
-                                setPassword(event.target.value);
-                            }} />
-                    </div>
+        <div className="containerr2">
 
-                    <div class="button text-center" onClick={addUser}>Iniciar sesión</div>
-
-                    <p>¿No tienes una cuenta?</p>
-                    <p><a class="link" href="/signup">Crea una</a></p>
-                    <div class="container"></div>
+            <h1>Iniciar sesión</h1>
+            <div className="container">
+                <label>Nombre de usuario</label>
+                <div className="input-container">
+                    <input type="text" className="text_area" placeholder="Escribe aquí."
+                        onChange={(event) => {
+                            setUser(event.target.value);
+                        }} />
                 </div>
-            </form>
+                <label>Correo electrónico</label>
+                <div className="input-container">
+                    <input type="email" className="text_area" placeholder="Escribe aquí."
+                        onChange={(event) => {
+                            setEmail(event.target.value);
+                        }} />
+                </div>
+                <label>Contraseña</label>
+                <div className="input-container">
+                    <input type="password" className="text_area" placeholder="Escribe aquí."
+                        onChange={(event) => {
+                            setPassword(event.target.value);
+                        }} />
+                </div>
+
+                <div className="button text-center" onClick={logUser}>Iniciar sesión</div>
+
+                <p>¿No tienes una cuenta?</p>
+                <p><a className="link" href="/signup">Crea una</a></p>
+                <div className="container"></div>
+            </div>
+
+            <h1>{loginStatus}</h1>
+
+
         </div>
 
     )
