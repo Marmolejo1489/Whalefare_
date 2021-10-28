@@ -8,16 +8,16 @@ const { encrypt, decrypt } = require('../Encryption');
 
 //Función - Agregar
 router.post('/add', (req, res) => {
-    var { user_c, pass_c, website_c } = req.body;
+    var { user_c, pass_c, website_c, id_u } = req.body;
     const hashedPassword = encrypt(pass_c);
     pass_c = hashedPassword.password;
     const key_c = hashedPassword.iv;
-
     const newUser = {
         user_c,
         pass_c,
         website_c,
-        key_c
+        key_c,
+        id_u
     };
 
     pool.query("INSERT INTO password set ?", [newUser],
@@ -32,8 +32,9 @@ router.post('/add', (req, res) => {
 });
 
 //Función - Listar
-router.get('/home', (req, res) => {
-    pool.query("SELECT * FROM password",
+router.post('/home', (req, res) => {
+    const { id_u } = req.body;
+    pool.query("SELECT * FROM password WHERE id_u = ?", [id_u],
         (err, result) => {
             if (err) {
                 console.log(err);
@@ -43,8 +44,9 @@ router.get('/home', (req, res) => {
         });
 });
 
+
 //Función - Mostrar
-router.post('/decryptpass', (req, res)=>{
+router.post('/decryptpass', (req, res) => {
     res.send(decrypt(req.body));
 });
 
