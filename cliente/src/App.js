@@ -4,7 +4,7 @@ import Login from './Login';
 import Signup from './Signup';
 import Logout from './Logout';
 import Home from './Home'
-
+import Generador from './Generador';
 //import Alert from './components/Alert';
 
 import {
@@ -13,6 +13,7 @@ import {
     Route,
     NavLink
 } from 'react-router-dom'
+
 
 function App() {
 
@@ -55,11 +56,11 @@ function App() {
                     <Login />
                 </Route>
                 <Route path="/signup">
-
                     <Signup />
                 </Route>
                 <Route path="/home">
-                    <Home/>
+                    <Home />
+                    <Generador />
                 </Route>
             </Switch>
         </Router>
