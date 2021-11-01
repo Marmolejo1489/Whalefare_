@@ -49,6 +49,7 @@ CREATE TABLE IF NOT EXISTS `Krishna_sql`.`Contraseña` (
   `id_c` INT NOT NULL AUTO_INCREMENT,
   `id_u` INT NOT NULL,
   `id_d` INT NOT NULL,
+  `title_c` VARCHAR(45) NOT NULL,
   `pass_c` VARCHAR(45) NOT NULL,
   `safe_c` TINYINT NOT NULL,
   `user_c` VARCHAR(45) NULL,
