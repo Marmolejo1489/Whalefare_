@@ -34,7 +34,7 @@ app.use(flash());
 
 //Rutas
 app.use(require('./routes'));
-app.use(require('./routes/sessions'));
+app.use(require('./routes/auth'));
 app.use(require('./routes/passwords'));
 
 //Variables globales
