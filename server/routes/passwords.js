@@ -8,11 +8,17 @@ const { encrypt, decrypt } = require('../Encryption');
 
 //Función - Agregar
 router.post('/add', (req, res) => {
-    var { user_c, pass_c, website_c, id_u } = req.body;
-    const hashedPassword = encrypt(pass_c);
+    var { user_c, pass_c, website_c, id_u, title_c } = req.body;
+
+    const passobj = {
+        password: pass_c
+    }
+
+    const hashedPassword = encrypt(passobj);
     pass_c = hashedPassword.password;
     const key_c = hashedPassword.iv;
-    const newUser = {
+    const newPass = {
+        title_c,
         user_c,
         pass_c,
         website_c,
@@ -20,7 +26,7 @@ router.post('/add', (req, res) => {
         id_u
     };
 
-    pool.query("INSERT INTO password set ?", [newUser],
+    pool.query("INSERT INTO password set ?", [newPass],
         (err, result) => {
             if (err) {
                 console.log(err);
@@ -28,7 +34,6 @@ router.post('/add', (req, res) => {
                 res.send("Success");
             }
         });
-
 });
 
 //Función - Listar
@@ -44,10 +49,43 @@ router.post('/home', (req, res) => {
         });
 });
 
-
 //Función - Mostrar
 router.post('/decryptpass', (req, res) => {
+    console.log(req.body)
     res.send(decrypt(req.body));
+});
+
+//Función - Editar
+router.post('/edit/:id_c', async (req, res) => {
+
+    const { id_c } = req.params;
+    const iv = await pool.query('SELECT key_c FROM password WHERE id_c = ?', [id_c]);
+
+    const key_c = iv[0].key_c;
+
+    var { user_c, pass_c, website_c, title_c } = req.body;
+    const passobj = {
+        password: pass_c,
+        iv: key_c
+    }
+
+    const hashedPassword = encrypt(passobj);
+    pass_c = hashedPassword.password;
+
+    const newPass = {
+        title_c,
+        user_c,
+        pass_c,
+        website_c,
+        id_c
+    };
+    await pool.query('UPDATE password set ? WHERE id_c = ?', [newPass, id_c]);
+});
+
+//Función - Borrar
+router.post('/delete/:id_c', async (req, res) => {
+    const { id_c } = req.params;
+    await pool.query('DELETE FROM password WHERE id_c = ?', [id_c]);
 });
 
 module.exports = router;
