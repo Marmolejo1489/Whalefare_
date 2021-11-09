@@ -1,11 +1,15 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import Axios from 'axios';
 import Login from './Login';
 import Signup from './Signup';
 import Logout from './Logout';
-import Home from './Home'
+import Home from './Home';
+import Profile from './Profile';
+/*
+import Add from './Add';
+import Alert from './components/Alert';
+*/
 import Generador from './Generador';
-//import Alert from './components/Alert';
 
 import {
     BrowserRouter as Router,
@@ -16,6 +20,15 @@ import {
 
 
 function App() {
+    const [user, setUser] = useState("");
+
+    useEffect(() => {
+        Axios.get('http://localhost:4000/profile').then((response) => {
+            if (response.data.user) {
+                setUser(response.data.user[0].id_u);
+            }
+        });
+    }, []);
 
     Axios.defaults.withCredentials = true;
 
@@ -44,10 +57,15 @@ function App() {
                             <li className="nav-item">
                                 <div className="nav-link" aria-current="page"><NavLink to="/logout" activeClassName="active">Cerrar sesión</NavLink></div>
                             </li>
+                            <li className="nav-item">
+                                <img height="30px" width="30px" src={"https://avatars.dicebear.com/api/jdenticon/" + user + ".svg?b=%23000000&r=50"} className="card-img-top" alt="profilePic" />
+                                <div className="nav-link" aria-current="page"><NavLink to="/profile" activeClassName="active">Perfil</NavLink></div>
+                            </li>
                         </ul>
                     </div>
                 </div>
             </nav>
+
             <Switch>
                 <Route path="/logout">
                     <Logout />
@@ -60,7 +78,15 @@ function App() {
                 </Route>
                 <Route path="/home">
                     <Home />
+                </Route>
+                <Route path="/generar">
                     <Generador />
+                </Route>
+                <Route path="/profile">
+                    <div className="container">
+                        <Profile />
+                    </div>
+
                 </Route>
             </Switch>
         </Router>

@@ -15,9 +15,7 @@ function Signup() {
         });
 
     };
-
     return (
-
         <div className="containerr2">
             <form >
                 <h1>Registrarme</h1>
@@ -44,7 +42,7 @@ function Signup() {
                             }} />
                     </div>
 
-                    <div className="button text-center" onClick={addUser}>Crear cuenta</div>
+                    <button className="btn btn-primary" onClick={addUser}>Crear cuenta</button>
 
                     <p>¿Ya tienes una cuenta?</p>
                     <p><a className="link" href="/login">Inicia sesión</a></p>

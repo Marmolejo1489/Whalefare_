@@ -23,10 +23,10 @@ function Generador() {
 
     return (
         <div>
-            <h5>Generate a random password in React - <a href="https://www.cluemediator.com/" target="_blank">Clue Mediator</a></h5>
-            <div class="container">
-                <div class="row">
-                    <div class="col">
+            <h5>Generate a random password in React - Clue Mediator</h5>
+            <div className="container">
+                <div className="row">
+                    <div className="col">
                         <label>
                             <span className="lbl-len">Length:</span>
                             <input
@@ -38,8 +38,8 @@ function Generador() {
                         </label>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col">
+                <div className="row">
+                    <div className="col">
                         <label className="form-control">
                             <input
                                 type="checkbox"
@@ -50,7 +50,7 @@ function Generador() {
                             <span>LowerCase</span>
                         </label>
                     </div>
-                    <div class="col">
+                    <div className="col">
                         <label className="form-control">
                             <input
                                 type="checkbox"
@@ -62,8 +62,8 @@ function Generador() {
                         </label>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col">
+                <div className="row">
+                    <div className="col">
                         <label className="form-control">
                             <input
                                 type="checkbox"
@@ -74,7 +74,7 @@ function Generador() {
                             <span>Numbers</span>
                         </label>
                     </div>
-                    <div class="col">
+                    <div className="col">
                         <label className="form-control">
                             <input
                                 type="checkbox"
@@ -87,8 +87,8 @@ function Generador() {
                     </div>
                 </div>
                 <small>Note: At least one should be true.</small>
-                <div class="row">
-                    <div class="col">
+                <div className="row">
+                    <div className="col">
                         <input
                             type="button"
                             className="btn btn-dark mt-2 mb-3"
