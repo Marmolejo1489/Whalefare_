@@ -1,19 +1,16 @@
 function Footer(){
     return(
         <footer>
-            <div className="container-footer-all">
+            <div className="row row-cols-3">
                 <div className="container-body">
                     <div className="colum1">
                         <h1>Deberías leer</h1>
                         <div className="row2">
-                            <a href="privacidad.html" aria-label="Deberías leer la política de privacidad.">
-                                <p>Política de privacidad</p>
-                            </a>
+                            <p>Política de privacidad</p>
                             <br/>
-                            <a href="condiciones.html" aria-label="Deberías leer los términos y condiciones.">
-                                <p>Términos y condiciones
+                            <p>Términos y condiciones
                                 </p>
-                            </a>
+                            
                         </div>
                     </div>
 

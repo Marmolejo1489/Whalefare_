@@ -1,93 +1,91 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef, } from 'react'
 import Axios from 'axios';
-import Login from './Login';
-import Signup from './Signup';
-import Logout from './Logout';
 import Home from './Home';
 import Profile from './Profile';
+import NotFound from './NotFound';
+import Sign from './Sign';
+import Nav from './Nav'
 /*
 import Add from './Add';
 import Alert from './components/Alert';
 */
 import Generador from './Generador';
+import { createBrowserHistory } from 'history'
 
 import {
     BrowserRouter as Router,
     Switch,
     Route,
-    NavLink
+    Redirect
+
 } from 'react-router-dom'
-
-
 function App() {
-    const [user, setUser] = useState("");
 
-    useEffect(() => {
+    const [isLogged, setIsLogged] = useState();
+
+    const check = () => {
         Axios.get('http://localhost:4000/profile').then((response) => {
-            if (response.data.user) {
-                setUser(response.data.user[0].id_u);
+            if (response.data.loggedIn) {
+                setIsLogged(response.data.loggedIn)
+            } else {
+                setIsLogged(false)
             }
         });
-    }, []);
+    }
+
+    const mounted = useRef();
+    useEffect(() => {
+        if (!mounted.current) {
+            check();
+            mounted.current = true;
+        } else {
+            check();
+        }
+    });
+
 
     Axios.defaults.withCredentials = true;
 
     return (
-        <Router>
-            <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
-                <div className="container-fluid ">
-                    <div className="navbar-brand mx-5">WHALEFARE</div>
-                    <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-                        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                        <span className="navbar-toggler-icon"></span>
-                    </button>
-                </div>
-                <div className="container-fluid">
-                    <div className="collapse navbar-collapse" id="navbarSupportedContent">
-                        <ul className="navbar-nav mx-5">
-                            <li className="nav-item">
-                                <div className="nav-link" aria-current="page"><NavLink to="/home" activeClassName="active">Home</NavLink></div>
-                            </li>
-                            <li className="nav-item">
-                                <div className="nav-link" aria-current="page"><NavLink to="/login" activeClassName="active">Iniciar sesión</NavLink></div>
-                            </li>
-                            <li className="nav-item">
-                                <div className="nav-link" aria-current="page"><NavLink to="/signup" activeClassName="active">Registrarme</NavLink></div>
-                            </li>
-                            <li className="nav-item">
-                                <div className="nav-link" aria-current="page"><NavLink to="/logout" activeClassName="active">Cerrar sesión</NavLink></div>
-                            </li>
-                            <li className="nav-item">
-                                <img height="30px" width="30px" src={"https://avatars.dicebear.com/api/jdenticon/" + user + ".svg?b=%23000000&r=50"} className="card-img-top" alt="profilePic" />
-                                <div className="nav-link" aria-current="page"><NavLink to="/profile" activeClassName="active">Perfil</NavLink></div>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </nav>
+        <Router history={createBrowserHistory}>
+            <Nav />
 
             <Switch>
-                <Route path="/logout">
-                    <Logout />
-                </Route>
-                <Route path="/login">
-                    <Login />
-                </Route>
-                <Route path="/signup">
-                    <Signup />
+                <Route path="/sign">
+
+                    <Sign />
+
                 </Route>
                 <Route path="/home">
-                    <Home />
+                    <div className="container">
+                        {
+                            isLogged === true ?
+                                <Home />
+                                :
+                                <Redirect to={{ pathname: '/' }} />
+                        }
+                    </div>
                 </Route>
                 <Route path="/generar">
                     <Generador />
                 </Route>
                 <Route path="/profile">
                     <div className="container">
-                        <Profile />
+                        {
+                            isLogged === true ?
+                                <Profile />
+                                :
+                                <Redirect to={{ pathname: '/' }} />
+                        }
                     </div>
-
                 </Route>
+                <Route path="/" exact>
+                    <div className="container">
+                        {//<LoggedRoute path="/landing" Component={Profile} isAuth={isLogged} />
+                        }
+                    </div>
+                </Route>
+                <Route component={NotFound} />
             </Switch>
         </Router>
     );

@@ -4,8 +4,6 @@ const key = 'encryptionkeyencryptionkeyencryp';
 const encrypt = ({ password, iv }) => {
 
   if (iv) {
-    console.log(iv)
-    
     const cipher = crypto.createCipheriv('aes-256-ctr', Buffer.from(key), Buffer.from(iv, "hex"));
 
     const encryptedPassword = Buffer.concat([cipher.update(password), cipher.final()]);

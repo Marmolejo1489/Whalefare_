@@ -6,115 +6,154 @@ import {
 */
 import Axios from 'axios';
 
-function Password(val) {
+function Password(props) {
 
-    var [clicked, setClicked] = useState(true);
-    const [Password, setPassword] = useState("");
+    const [clicked, setClicked] = useState(true);
+    const [boo, setBoo] = useState(true);
+
+    const [Password, setPassword] = useState();
     const [User, setUser] = useState("");
     const [Website, setWebsite] = useState("");
     const [Title, setTitle] = useState("");
 
-    var boo = true;
     const hidePass = () => {
         if (boo) {
-            document.getElementById("pass" + val.id_c).type = "text";
-            document.getElementById("eye" + val.id_c).className = "fa fa-eye";
-            boo = false;
+            document.getElementById("pass" + props.id_c).type = "text";
+            document.getElementById("eye" + props.id_c).className = "fa fa-eye";
+            setBoo(false)
+
         } else {
-            document.getElementById("pass" + val.id_c).type = "password";
-            document.getElementById("eye" + val.id_c).className = "fa fa-eye-slash";
-            boo = true;
+            document.getElementById("pass" + props.id_c).type = "password";
+            document.getElementById("eye" + props.id_c).className = "fa fa-eye-slash";
+            setBoo(true)
         }
     }
 
     const toEditPass = () => {
+
         if (clicked) {
-            document.getElementById("btn0" + val.id_c).hidden = true;
-            document.getElementById("btn1" + val.id_c).hidden = false;
-            document.getElementById("pass" + val.id_c).disabled = false;
-            document.getElementById("user" + val.id_c).disabled = false;
-            document.getElementById("web" + val.id_c).disabled = false;
-            document.getElementById("title" + val.id_c).disabled = false;
-            setClicked(false);
+            document.getElementById("btn0" + props.id_c).hidden = true;
+            document.getElementById("btn1" + props.id_c).hidden = false;
+            document.getElementById("pass" + props.id_c).disabled = false;
+            document.getElementById("user" + props.id_c).disabled = false;
+            document.getElementById("web" + props.id_c).disabled = false;
+            document.getElementById("title" + props.id_c).disabled = false;
+           setClicked(false)
+            console.log("Estado de clicked: " + clicked)
         }
+
     }
 
-    const editPass = (id_c) => {
+    const editPass = async (id_c) => {
+        console.log("Estado de clicked : " + clicked)
+        //Funcion de actualizar
         if (!clicked) {
-            document.getElementById("btn0" + val.id_c).hidden = false;
-            document.getElementById("btn1" + val.id_c).hidden = true;
-            document.getElementById("pass" + val.id_c).disabled = true;
-            document.getElementById("user" + val.id_c).disabled = true;
-            document.getElementById("web" + val.id_c).disabled = true;
-            document.getElementById("title" + val.id_c).disabled = true;
-            setClicked(true);
-            Axios.post("http://localhost:4000/edit/" + id_c, {
+            console.log("Problema en entrar")
+            document.getElementById("btn0" + props.id_c).hidden = false;
+            document.getElementById("btn1" + props.id_c).hidden = true;
+            document.getElementById("pass" + props.id_c).disabled = true;
+            document.getElementById("user" + props.id_c).disabled = true;
+            document.getElementById("web" + props.id_c).disabled = true;
+            document.getElementById("title" + props.id_c).disabled = true;
+            setClicked(true)
+
+            await Axios.put("http://localhost:4000/edit/" + id_c, {
                 title_c: Title,
                 user_c: User,
                 pass_c: Password,
                 website_c: Website
             });
+            console.log("Problema en Axios")
         }
     }
 
     const deletePass = (id_c) => {
-
-        Axios.post("http://localhost:4000/delete/" + id_c);
-
+        console.log("Entrando a borrar")
+        //Funcion de actualizar
+        Axios.delete("http://localhost:4000/delete/" + id_c)
     }
 
-    /*
-    Axios.get('http://localhost:4000/login').then((response) => {
-            if (response.data.user) {
-                var id_u = response.data.user[0].id_u;
-                Axios.post('http://localhost:4000/home', { id_u: id_u }).then((response) => {
-                    setPasswordList(response.data);
-                });
-            }
-        });
-    */
-
     return (
-
-        <div className="col">
+        <div className="col" >
             <div className="card">
+                <h3 className="card-header bg-success text-white">{props.title_c}</h3>
                 <div className="container">
                     <label>Titulo</label>
                     <div className="mb-3 input-group">
-                        <input id={"title" + val.id_c} className="form-control" disabled={true} defaultValue={val.title_c}
-                            onChange={(event) => {
-                                setTitle(event.target.value);
-                            }} />
+                        <input
+                            name="Title"
+                            id={"title" + props.id_c}
+                            className="form-control"
+                            disabled={true}
+                            onChange={(event) => {setTitle(event.target.value)}}
+                            defaultValue={props.title_c}
+                        />
                     </div>
                     <label>Nombre de usuario</label>
                     <div className="mb-3 input-group">
-                        <input name="" id={"user" + val.id_c} className="form-control" disabled={true} defaultValue={val.user_c}
-                            onChange={(event) => {
-                                setUser(event.target.value);
-                            }} />
+                        <input
+                            name="User"
+                            id={"user" + props.id_c}
+                            className="form-control"
+                            disabled={true}
+                            onChange={(event) => {setUser(event.target.value)}}
+                            defaultValue={props.user_c}
+                        />
                     </div>
                     <label>Contraseña</label>
                     <div className="mb-3 input-group">
-                        <input type="password" id={"pass" + val.id_c} className="form-control" disabled={true} defaultValue={val.password}
-                            onChange={(event) => {
-                                setPassword(event.target.value);
-                            }}
+                        <input
+                            name="Password"
+                            type="password"
+                            id={"pass" + props.id_c}
+                            className="form-control"
+                            disabled={true}
+                            onChange={(event) => {setPassword(event.target.value)}}
+                            defaultValue={props.pass_c}
                         />
-                        <span onClick={hidePass} className="input-group-text"><i id={"eye" + val.id_c} className="fa fa-eye" aria-hidden="true"></i></span>
+                        <span
+                            onClick={() => {hidePass()}}
+                            className="input-group-text">
+                            <i id={"eye" + props.id_c}
+                                className="fa fa-eye"
+                                aria-hidden="true">
+                            </i>
+                        </span>
                     </div>
                     <label>Sitio web</label>
                     <div className="mb-3 input-group">
-                        <input id={"web" + val.id_c} className="form-control" disabled={true} defaultValue={val.website_c}
-                            onChange={(event) => {
-                                setWebsite(event.target.value);
-                            }} />
+                        <input
+                            name="Website"
+                            id={"web" + props.id_c}
+                            className="form-control"
+                            disabled={true}
+                            onChange={(event) => {setWebsite(event.target.value)}}
+                            defaultValue={props.website_c}
+                        />
                     </div>
                     <div className="text-center">
-                        <button className="btn btn-warning" id={"btn0" + val.id_c} hidden={false} onClick={() => { toEditPass() }}>Editar</button>
-                        <button className="btn btn-warning" id={"btn1" + val.id_c} hidden={true} onClick={() => { editPass(val.id_c) }}>Guardar</button>
-                        <button className="btn btn-danger" id={"btn2" + val.id_c} onClick={() => { deletePass(val.id_c) }}>Borrar</button>
-                        <br/>
-                        <a className="btn btn-primary" href={val.website_c}>Visitar sitio</a>
+                        <button
+                            className="btn btn-warning"
+                            id={"btn0" + props.id_c}
+                            hidden={false}
+                            onClick={() => { toEditPass() }}>
+                            <i className="fa fa-pen" />
+                        </button>
+                        <button
+                            className="btn btn-warning"
+                            id={"btn1" + props.id_c}
+                            hidden={true}
+                            onClick={() => { editPass(props.id_c) }}>
+                            Guardar
+                        </button>
+                        <button
+                            className="btn btn-danger"
+                            id={"btn2" + props.id_c}
+                            onClick={() => { deletePass(props.id_c) }}>
+                            <i className="fa fa-trash" />
+                        </button>
+                        <br />
+                        <a className="btn btn-primary" href={props.website_c}> <i className="fa fa-check" /></a>
                     </div>
                 </div>
             </div>
