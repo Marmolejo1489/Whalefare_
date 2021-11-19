@@ -1,86 +1,178 @@
-import React, { useEffect, useState } from 'react'
-import Add from './Add'
+import React, { useState, useEffect, useRef, } from 'react'
 import Axios from 'axios';
-import Password from './Password';
+import Home from './Home';
+import Profile from './Profile';
+import NotFound from './NotFound';
+import Sign from './Sign';
+import Navbar from './components/Navbarr';
+import Navbar2 from './components/Navbarr2';
 import Login from './Login';
 import Signup from './Signup';
+import Logout from './Logout';
+import Feature from './components/Feature';
+import Footer from './components/Footer';
+
+import Politicas from './Politicas';
+import Terminos from './Terminos';
+import Add from './Add';
+/*
+import Alert from './components/Alert';
+*/
+import Generador from './Generador';
+import { createBrowserHistory } from 'history'
 
 import {
     BrowserRouter as Router,
     Switch,
     Route,
-    NavLink
+    Redirect
+
 } from 'react-router-dom'
-
+import { Nav } from 'reactstrap';
 function App() {
-    const [passwordList, setPasswordList] = useState([]);
+    const [nav,setnav] = useState(false);
+    const [isLogged, setIsLogged] = useState();
 
-    useEffect(() => {
-        Axios.get('http://localhost:4000/home').then((response) => {
-            setPasswordList(response.data);
-        })
-    }, []);
-
-    const decryptedPassword = (encryption) => {
-        Axios.post('http://localhost:4000/decryptpass', { password: encryption.password, iv: encryption.iv }).then((response) => {
-            setPasswordList(passwordList.map((val) => {
-                return val.id_c === encryption.id ? { id: val.id_c, pass_c: val.pass_c, nombre: response.data, website_c: val.website_c, name_u: val.user_c, iv: val.key_c } : val;
-            }));
+    const check = () => {
+        Axios.get('http://localhost:4000/profile').then((response) => {
+            if (response.data.loggedIn) {
+                setIsLogged(response.data.loggedIn)
+            } else {
+                setIsLogged(false)
+            }
         });
-    };
+    }
+
+    const mounted = useRef();
+    useEffect(() => {
+        if (!mounted.current) {
+            check();
+            mounted.current = true;
+        } else {
+            check();
+        }
+    });
+
+
+    Axios.defaults.withCredentials = true;
+    const changeBackground = () =>{
+        if(window.scrollY >= 20){
+            setnav(true);
+        }else{
+            setnav(false);
+        }
+    }
+    window.addEventListener('scroll', changeBackground);
 
     return (
-        <Router>
-            <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
-                <div className="container-fluid ">
-                    <div className="navbar-brand mx-5">WHALEFARE</div>
-                    <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-                        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                        <span className="navbar-toggler-icon"></span>
-                    </button>
-                </div>
-                <div className="container-fluid">
-                    <div className="collapse navbar-collapse" id="navbarSupportedContent">
-                        <ul className="navbar-nav mx-5">
-                            <li className="nav-item">
-                                <div className="nav-link" aria-current="page"><NavLink to="/home" activeClassName="active">Home</NavLink></div>
-                            </li>
-                            <li className="nav-item">
-                                <div className="nav-link" aria-current="page"><NavLink to="/login" activeClassName="active">Iniciar sesión</NavLink></div>
-                            </li>
-                            <li className="nav-item">
-                                <div className="nav-link" aria-current="page"><NavLink to="/signup" activeClassName="active">Registrarme</NavLink></div>
-                            </li>
-                        </ul>
+
+        <Router history={createBrowserHistory}>  
+           
+        <div> <div id="main">
+       
+         <Switch>
+             <Route path="/" exact>
+            <div className='main'>
+             <Navbar/>
+             <div className="container">
+                        {//<LoggedRoute path="/landing" Component={Profile} isAuth={isLogged} />
+                        }
+            </div>
+             <div className='name'>
+             <h1><span>Almacena</span>, genera y aplica contraseñas</h1>
+             <br/>
+             <p className='details'>Whalefare te ofrece un entorno seguro para almacenar, generar y aplicar contraseñas.</p>
+             <a href="./login" className='cv-btn'>Comienza ya</a>
+             </div>
+             </div>
+             </Route>
+             <Route path="/logout">
+             <div className='main4'>
+                 <Logout />
+                 </div>
+             </Route>
+             <Route path="/footer">
+                 <Footer />
+             </Route>
+             <Route path="/login">
+                <div className='main2'>
+                 <Navbar/>
+                 <Login/>   
+                 </div>
+             </Route>
+             <Route path="/signup">
+                 <div className='main3'>
+             <Navbar/>
+                 <Signup />
+                 </div>
+             </Route>
+             <Route path="/add">
+            <div className='main5'>
+            <Navbar2/>
+            <Add/>
+            </div>
+             </Route>
+             <Route path="/home">
+            <div className='main4'>
+             <div className="container">
+             <Navbar2/>
+             <Home/>
+                        { 
+                            isLogged === true ?
+                            <>
+                            <Navbar2/>
+                            <Home />
+                            </>
+                                 :
+                              
+                                <Redirect to={{ pathname: '/' }} />
+                        }
                     </div>
-                </div>
-            </nav>
-            <Switch>
-                <Route path="/login">
-                    <Login/>
+                    </div>
+             </Route>
+             <Route path="/generar">
+                 <div className='main'>
+             <Navbar2 />
+                 <Generador />
+                 </div>
+             </Route>
+             <Route path="/profile">
+             <div className='main5'>
+                        {
+                            isLogged === true ?
+                                <>
+                                <Navbar2/>
+                                <Profile />
+                                </>
+                                :
+                                <Redirect to={{ pathname: '/' }} />
+                                
+                        }
+                       </div>
+                </Route> 
+                 <Route path="/sign">
+                    <Sign />
                 </Route>
-                <Route path="/signup">
-                    <Signup/>
-                </Route>
-                <Route path="/home">
-                    <div className="Passwords">
-                        <div className="container p-4">
-                            <div className="row row-cols-3">
-                                {passwordList.map((val, key) => {
-                                    return (
-                                        <div key={key} onClick={() => { decryptedPassword({ password: val.pass_c, iv: val.key_c, id: val.id_c }) }}>
-                                            <Password {...val} />
-                                            <br />
-                                        </div>
-                                    )
-                                })}
-                                <Add />
-                            </div>
-                        </div>
+                <Route path="/terminos">
+                    <div className='main4'>
+                    <Terminos />
                     </div>
                 </Route>
-            </Switch>
-        </Router>
+                <Route path="/politicas">
+                    <div className='main4'>
+                    <Politicas />
+                    </div>
+                </Route>
+                <Route component={NotFound} />
+         </Switch>
+         </div>
+         <Feature></Feature>
+         <Footer></Footer>
+      </div>
+      
+     </Router>
+     
+        
     );
 }
 /*

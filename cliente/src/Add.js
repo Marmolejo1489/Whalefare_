@@ -1,55 +1,104 @@
 import { useState } from 'react';
 import Axios from 'axios';
+import icon from './images/padlock.png';
+import {Col, Container, Row, Form, Button, Card} from "react-bootstrap";
+import Generador from './Generador';
+
+const { safetyPass } = require('./validation');
 
 function Add() {
 
   const [Password, setPassword] = useState("");
   const [User, setUser] = useState("");
-  const [Domain, setDomain] = useState("");
+  const [Website, setWebsite] = useState("");
+  const [Title, setTitle] = useState("");
+
+  /*
+  const onChange = (e) =>
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    if (password !== password2) {
+      setAlert('Las contraseñas no coinciden', 'danger', 2000);
+    } else {
+      register({
+        name,
+        email,
+        password,
+      });
+    }
+  };
+  */
 
   const addPassword = () => {
     Axios.post("http://localhost:4000/add", {
+      title_c: Title,
       user_c: User,
       pass_c: Password,
-      website_c: Domain
+      website_c: Website,
+      id_u: 18
     });
-    window.location.reload();
-  };
+    emptyInputs();
+    }
+
+  const emptyInputs = () => {
+    Array.from(document.querySelectorAll("input[name='form']")).forEach(
+      input => (input.value = "")
+    );
+  }
 
   return (
-
-
-    <div className="col">
-      <div className="card text-center">
-        <div className="container">
-          <label>Nombre de usuario</label>
-          <div className="input-container">
-            <input type="text" id="user" className="text_area" placeholder="Opcional"
+    <>
+    <Container>
+    <Card lg={4} md={6} sm={12} className="containeradd">
+      <br/>
+      <Card.Header style={{width:'100%'}}>Añade una contraseña</Card.Header>
+        <img className="icon-imgg" src={icon} alt="icon"/>
+    <Form>
+    <Form.Group className="mb-3" controlId="formBasicUser">
+    <Form.Label>Título</Form.Label>
+    <Form.Control  className='campo' type="text" name="form"
+              id={"Title"}
+              placeholder="Contraseña de Facebook"
+              onChange={(event) => { setTitle(event.target.value); }}
+            />
+    <Form.Label>Usuario</Form.Label>
+    <Form.Control  className='campo' type="text" id="user"  placeholder="Opcional"
               onChange={(event) => {
                 setUser(event.target.value);
               }} />
-          </div>
-          <label>Contraseña</label>
-          <div className="input-container">
-            <input type="text" id="pass" className="text_area" placeholder="Escribe aquí."
+    <Form.Label>Sitio web</Form.Label>
+    <Form.Control className='campo' type="website" id="email"  placeholder="Escribe aquí."
               onChange={(event) => {
-                setPassword(event.target.value);
+                setWebsite(event.target.value);
               }} />
-          </div>
-          <label>Sitio web</label>
-          <div className="input-container">
-            <input type="website" id="email" className="text_area" placeholder="Escribe aquí."
+    </Form.Group>
+    <Form.Label>Contraseña</Form.Label>
+    <Form.Control className='campo' type="text"  name="form"
+              id={"Password"} placeholder="Escribe aquí."
               onChange={(event) => {
-                setDomain(event.target.value);
+                setPassword(event.target.value)
+                safetyPass(event.target.value)
+                  ;
               }} />
-          </div>
-          <div className="input-container">
-            <br />
-            <div className="button" onClick={addPassword}>Añadir Contraseña</div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <p className="valid-feedback" id="p1"></p>
+    <p className="invalid-feedback" id="p1">Tu contraseña es débil.</p>
+    <br/>
+    <div className="d-grid gap-2">
+    <Button className='btnn' variant="primary" size="lg" onClick={addPassword}>Añadir</Button>
+  
+</div>
+</Form>
+    </Card>
+    <Col lg={4} md={6} sm={12} className='right'>
+    <Generador/>
+    </Col>
+    </Container>
+</>
 
   );
 }

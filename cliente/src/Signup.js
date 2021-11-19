@@ -1,4 +1,9 @@
 import React, { useState } from 'react';
+import { signupVal, safetyPass } from './validation'
+import { Alert } from 'reactstrap'
+import ValidationModal from './ValidationModal';
+import {Col, Container, Row, Form, Button} from "react-bootstrap";
+import loginIcon from './images/login.png';
 import Axios from 'axios';
 
 function Signup() {
@@ -6,53 +11,146 @@ function Signup() {
     const [Password, setPassword] = useState("");
     const [User, setUser] = useState("");
     const [Email, setEmail] = useState("");
+    const [modalType, setType] = useState("")
+    const [modalOpen, setOpen] = useState(false);
 
     const addUser = () => {
-        Axios.post("http://localhost:4000/signup", {
-            name_u: User,
-            pass_u: Password,
-            email_u: Email
-        });
-
+        const newUser = {
+            Password: Password,
+            User: User,
+            Email: Email
+        }
+        modalVal();
+        console.log("Form validation -> ", signupVal(newUser))
+        let type = {
+            modalValType: signupVal(newUser)
+        }
+        setType(type)
+        if (modalType === true) {
+            Axios.post("http://localhost:4000/signup", {
+                username: User,
+                password: Password,
+                email: Email
+            }).then((response) => {
+                if (response.data.message) {
+                    console.log(response.data.message);
+                } else {
+                    console.log("Estado de loggedIn -> " + response.data.loggedIn)
+                }
+            });
+        } else {
+            onShowAlert()
+        }
+        console.log("passSafety -> ", safetyPass(Password))
+        /*
+                
+                */
     };
 
-    return (
+    const onShowAlert = () => {
+        setOpen(true)
+        const open = () => {
+            window.setTimeout(() => {
+                setOpen(false)
+            }, 1000)
+        };
+        open();
+    }
 
-        <div class="containerr2">
-            <form >
-                <h1>Registrarme</h1>
-                <div class="container">
-                    <label>Nombre de usuario</label>
-                    <div class="input-container">
-                        <input type="text" id="pass" class="text_area" placeholder="Escribe aquí."
-                            onChange={(event) => {
+    const modalVal = () => {
+        setOpen(!modalOpen)
+    }
+
+    return (
+        
+        <>
+        <Container>
+        <Col lg={4} md={6} sm={12} className="containersign text-center">
+        <div className='containerr2'>
+            <Alert color="info"
+                isOpen={modalOpen}
+            >
+                <ValidationModal {...modalType} />
+            </Alert>
+            </div>
+            <img className="icon-img" src={loginIcon} alt="icon"/>
+            
+        <Form>
+        <Form.Group className="mb-3" controlId="formBasicUser">
+        <Form.Label>Nombre de usuario</Form.Label>
+        <Form.Control  className='campo' name="username"  type="text" placeholder="Escribe aquí."onChange={(event) => {
                                 setUser(event.target.value);
                             }} />
-                    </div>
-                    <label>Correo electrónico</label>
-                    <div class="input-container">
-                        <input type="email" id="pass" class="text_area" placeholder="Escribe aquí."
-                            onChange={(event) => {
+        </Form.Group>
+        <Form.Group className="mb-3" controlId="formBasicUser">
+        <Form.Label>Correo electrónico</Form.Label>
+        <Form.Control  className='campo'  type="email" placeholder="Escribe aquí." onChange={(event) => {
                                 setEmail(event.target.value);
                             }} />
-                    </div>
-                    <label>Contraseña</label>
-                    <div class="input-container">
-                        <input type="password" id="pass" class="text_area" placeholder="Escribe aquí."
-                            onChange={(event) => {
-                                setPassword(event.target.value);
-                            }} />
-                    </div>
-
-                    <div class="button text-center" onClick={addUser}>Crear cuenta</div>
-
-                    <p>¿Ya tienes una cuenta?</p>
-                    <p><a class="link" href="/login">Inicia sesión</a></p>
-                    <div class="container"></div>
-                </div>
-            </form>
+        </Form.Group>
+        <Form.Group className="mb-3" controlId="formBasicPassword">
+        <Form.Label>Contraseña</Form.Label>
+        <Form.Control className='campo' id="Password" type="password" placeholder="Escribe aaaaquí." onChange={(event) => {
+                            setPassword(event.target.value);
+                            safetyPass(event.target.value);
+                        }} />
+                 <div id="p1"></div>
+        </Form.Group>
+   
+        <div className="d-grid gap-2">
+        <Button className='btnn' variant="primary" size="lg" onClick={addUser}>
+        Crear cuenta
+        </Button>
+        <div>
+        <p>¿Ya tienes una cuenta?</p>
+        <a href="/login"><small className='reset'>Inicia Sesión</small></a>
         </div>
+   
+</div>
+</Form>
+        </Col>
+        </Container>
+    </>
+        /*
+        <div className="containerr2">
+            <Alert color="info"
+                isOpen={modalOpen}
+            >
+                <ValidationModal {...modalType} />
+            </Alert>
+            <h1>Registrarme</h1>
+            <div className="container">
+                <label>Nombre de usuario</label>
+                <div className="input-container">
+                    <input type="text" className="text_area" placeholder="Escribe aquí." name="username"
+                        onChange={(event) => {
+                            setUser(event.target.value);
+                        }} />
+                </div>
+                <label>Correo electrónico</label>
+                <div className="input-container">
+                    <input type="email" className="text_area" placeholder="Escribe aquí." name="email"
+                        onChange={(event) => {
+                            setEmail(event.target.value);
+                        }} />
+                </div>
+                <label>Contraseña</label>
+                <div className="input-container">
+                    <input type="password" id="Password" className="text_area" placeholder="Escribe aquí." name="password"
+                        onChange={(event) => {
+                            setPassword(event.target.value);
+                            safetyPass(event.target.value);
+                        }} />
+                    <div id="p1"></div>
+                </div>
+                <button className="btn btn-primary" onClick={addUser}>Crear cuenta</button>
+                <p>¿Ya tienes una cuenta?</p>
+                <p><a className="link" href="/login">Inicia sesión</a></p>
+                <div className="container"></div>
+            </div>
 
+        </div>
+*/
     )
 }
 
