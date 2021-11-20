@@ -1,5 +1,3 @@
-const mysql = require('mysql');
-
 module.exports = {
     database: {
     host: 'localhost',

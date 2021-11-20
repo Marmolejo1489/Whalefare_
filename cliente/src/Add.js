@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import Axios from 'axios';
+const { safetyPass } = require('./validation');
 
 function Add() {
 
@@ -8,35 +9,42 @@ function Add() {
   const [Website, setWebsite] = useState("");
   const [Title, setTitle] = useState("");
 
-  const safetyPass = (e) => {
-    let strongPassword = new RegExp('(?=.*[A-Z])(?=.*[0-9])(?=.*[:-_!@#$&*.]).{8}');
-    let mediumPassword = new RegExp('(?=.*[0-9])(?=.*[!@#$&*.]).{8}');
-    if (strongPassword.test(e)) {
-      document.getElementById("inputPass").className = "form-control is-valid";
-      document.getElementById("p1").innerHTML = "Tu contraseña es fuerte.";
-    } else if (mediumPassword.test(e)) {
-      document.getElementById("inputPass").className = "form-control is-valid";
-      document.getElementById("p1").innerHTML = "Tu contraseña puede mejorar.";
+  /*
+  const onChange = (e) =>
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    if (password !== password2) {
+      setAlert('Las contraseñas no coinciden', 'danger', 2000);
     } else {
-      document.getElementById("inputPass").className = "form-control is-invalid";
-      document.getElementById("p1").innerHTML = "Tu contraseña es débil.";
+      register({
+        name,
+        email,
+        password,
+      });
     }
-  }
+  };
+  */
 
   const addPassword = () => {
-    Axios.get('http://localhost:4000/profile').then((response) => {
-      if (response.data.user) {
-        var id_u = response.data.user[0].id_u;
-
-        Axios.post("http://localhost:4000/add", {
-          title_c: Title,
-          user_c: User,
-          pass_c: Password,
-          website_c: Website,
-          id_u: id_u
-        });
-      }
+    Axios.post("http://localhost:4000/add", {
+      title_c: Title,
+      user_c: User,
+      pass_c: Password,
+      website_c: Website,
+      id_u: 18
     });
+    emptyInputs();
+    }
+
+  const emptyInputs = () => {
+    Array.from(document.querySelectorAll("input[name='form']")).forEach(
+      input => (input.value = "")
+    );
   }
 
   return (
@@ -45,26 +53,38 @@ function Add() {
         <div className="card-body">
           <label>Título</label>
           <div className="mb-3 input-group">
-            <input type="text" id="formFileMultiple" className="form-control" placeholder="Escribe aquí."
-              onChange={(event) => {
-                setTitle(event.target.value);
-              }} />
+            <input
+              name="form"
+              id={"Title"}
+              placeholder="Contraseña de Facebook"
+              className="form-control"
+              onChange={(event) => { setTitle(event.target.value); }}
+            />
           </div>
           <label>Usuario</label>
           <div className="input-container">
-            <input type="text" id="user" className="form-control" placeholder="Opcional"
-              onChange={(event) => {
-                setUser(event.target.value);
-              }} />
+            <input
+              name="form"
+              id={"User"}
+
+              placeholder="Opcional"
+              className="form-control"
+              onChange={(event) => { setUser(event.target.value) }}
+            />
           </div>
           <label>Contraseña</label>
           <div className="mb-3 input-group">
-            <input type="text" id="inputPass" className="form-control" placeholder="Escribe aquí."
-              onChange={(event) => {
+            <input
+              name="form"
+              id={"Password"}
+
+              placeholder="*********"
+              className="form-control"
+              onChange={(event) => { 
                 setPassword(event.target.value)
-                safetyPass(event.target.value)
-                  ;
-              }} />
+                safetyPass(event.target.value);
+                }}
+            />
             <p className="valid-feedback" id="p1">
 
             </p>
@@ -75,14 +95,18 @@ function Add() {
 
           <label>Sitio web</label>
           <div className="mb-3 input-group">
-            <input type="website" id="email" className="form-control" placeholder="Escribe aquí."
-              onChange={(event) => {
-                setWebsite(event.target.value);
-              }} />
+            <input
+              name="form"
+              id={"Website"}
+              placeholder="facebook.com"
+              className="form-control"
+              onChange={(event) => { setWebsite(event.target.value) }}
+            />
           </div>
 
-          <button className="btn btn-primary" onClick={addPassword}>Añadir Contraseña</button>
-
+          <button className="btn btn-primary"
+            onClick={addPassword}
+          >Añadir Contraseña</button>
         </div>
       </div>
     </div>

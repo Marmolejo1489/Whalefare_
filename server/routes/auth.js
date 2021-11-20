@@ -1,29 +1,19 @@
 const express = require('express');
-const pool = require('../database');
 const router = express.Router();
-const bcrypt = require('bcrypt');
-const saltRounds = 10;
+const passport = require('passport');
+
 
 //Función - Registro de usuario
-router.post('/signup', (req, res) => {
-    const { user_u, pass_u, email_u } = req.body;
-    bcrypt.hash(pass_u, saltRounds, (err, hash) => {
-        if (err) { console.log(err); }
-        const newUser = {
-            user_u: user_u,
-            pass_u: hash,
-            email_u: email_u
-        }
-        pool.query("INSERT INTO user set ?", [newUser],
-            (err, result) => {
-                if (err) {
-                    console.log(err);
-                } else {
-                    res.send("Success");
-                }
-            });
-    });
 
+router.post('/signup', (req, res, next) => {
+    passport.authenticate('local.signup', {
+        successRedirect: '/profile',
+        failureRedirect: '/',
+        failureFlash: true,
+    })(req, res, next);
+    if (req.session.user) {
+        res.send({ loggedIn: true, user: req.session.user });
+    }
 });
 
 //Función - Comprobación de sesión
@@ -38,46 +28,37 @@ router.get('/login', (req, res) => {
 
 //Función - Inicio de sesión
 
-router.post('/login', (req, res) => {
-    const { pass_u, email_u } = req.body;
-    pool.query("SELECT * FROM user where email_u = ?", email_u, (err, result) => {
-        if (err) {
-            res.send({ err: err });
-        }
-        if (result.length > 0) {
-            bcrypt.compare(pass_u, result[0].pass_u, (err, response) => {
-                if (response) {
-                    req.session.user = result;
-                    res.send(result);
-                    console.log(result)
-                } else {
-                    res.send({ message: "Las credenciales son erróneas." });
-                }
-            });
-        } else {
-            res.send({ message: "El correo electrónico ingresado no está registrado." });
-        }
-    })
-})
+router.post('/login', (req, res, next) => {
+    passport.authenticate('local.login', {
+        successRedirect: '/profile',
+        failureRedirect: '/login',
+        failureFlash: true,
+    })(req, res, next);
+});
 
 //Función - Cierre de sesión
 
 router.post('/logout', (req, res) => {
-    
-        res.clearCookie('userId');
-        res.send({ loggedIn: false });
-        console.log('sesión cerrada')
-    
+    req.logOut();
+    req.session.destroy;
+    res.clearCookie('userId');
+    req.session.user = null;
+    res.send({ loggedIn: false, user: null });
+    console.log('sesión cerrada')
 });
 
 //Función - Datos de la sesión
 
 router.get('/profile', (req, res) => {
-    
+
+    const path = require('path')
+
+
     if (req.session.user) {
         res.send({ loggedIn: true, user: req.session.user });
     } else {
         res.send({ loggedIn: false });
+
     }
 
 });

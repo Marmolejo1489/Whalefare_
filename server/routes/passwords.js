@@ -9,7 +9,6 @@ const { encrypt, decrypt } = require('../Encryption');
 //Función - Agregar
 router.post('/add', (req, res) => {
     var { user_c, pass_c, website_c, id_u, title_c } = req.body;
-
     const passobj = {
         password: pass_c
     }
@@ -37,7 +36,8 @@ router.post('/add', (req, res) => {
 });
 
 //Función - Listar
-router.post('/home', (req, res) => {
+router.post('/read', (req, res) => {
+    res.cookie('listValue', [1,2,3])
     const { id_u } = req.body;
     pool.query("SELECT * FROM password WHERE id_u = ?", [id_u],
         (err, result) => {
@@ -51,18 +51,19 @@ router.post('/home', (req, res) => {
 
 //Función - Mostrar
 router.post('/decryptpass', (req, res) => {
-    console.log(req.body)
-    res.send(decrypt(req.body));
+    const pass = {
+        iv: req.body.iv,
+        password: req.body.password
+    }
+    res.send(decrypt(pass));
 });
 
 //Función - Editar
-router.post('/edit/:id_c', async (req, res) => {
+router.put('/edit/:id_c', async (req, res) => {
 
     const { id_c } = req.params;
     const iv = await pool.query('SELECT key_c FROM password WHERE id_c = ?', [id_c]);
-
     const key_c = iv[0].key_c;
-
     var { user_c, pass_c, website_c, title_c } = req.body;
     const passobj = {
         password: pass_c,
@@ -83,7 +84,7 @@ router.post('/edit/:id_c', async (req, res) => {
 });
 
 //Función - Borrar
-router.post('/delete/:id_c', async (req, res) => {
+router.delete('/delete/:id_c', async (req, res) => {
     const { id_c } = req.params;
     await pool.query('DELETE FROM password WHERE id_c = ?', [id_c]);
 });
