@@ -1,4 +1,5 @@
 const passport = require('passport');
+const jwt = require('jsonwebtoken');
 const LocalStrategy = require('passport-local').Strategy;
 const pool = require('../database');
 const helpers = require('../lib/helpers');
@@ -9,14 +10,25 @@ passport.use('local.login', new LocalStrategy({
     passReqToCallback: true
 }, async (req, username, password, done) => {
     const array = await pool.query('SELECT * FROM user WHERE email_u = ?', [username]);
+    console.log(array)
     if (array.length > 0) {
-        req.session.user = array;
-        req.session.cookie.expires = false
-        const user = array[0];
-        const validPassword = helpers.matchPassword(password, user.pass_u);
+        const user = await array[0];
+        const validPassword = await helpers.matchPassword(password, user.pass_u);
         if (validPassword) {
             console.log('Bienvenido ' + user.user_u)
-            done(null, false, { message: 'Bienvenido ' + user.user_u });
+            console.log(validPassword)
+            req.session.isLogged = true;
+            req.session.user = user;
+            console.log(req.session.user)
+            const id = array[0].id_u;
+            console.log(id)
+            const token = jwt.sign({ id }, "jwtSecret", {
+                expiresIn: 600
+            })
+            req.session.jwtsecret = token;
+            req.session.cookie.expires = 600000
+
+            done(null, user, { message: 'Bienvenido ' + user.user_u });
         } else {
             console.log("Contraseña incorrecta")
             done(null, false, { message: 'Usuario inválido' });
@@ -34,18 +46,20 @@ passport.use('local.signup', new LocalStrategy({
 
     passReqToCallback: true
 }, async (req, username, password, done) => {
-
-    const newUser = {
-        user_u: req.body.username,
-        pass_u: req.body.password,
-        email_u: req.body.email
-    };
-    newUser.pass_u = await helpers.encryptPassword(req.body.password);
-    const result = await pool.query('INSERT INTO user set ?', [newUser]);
-    req.session.user = newUser;
-    req.session.cookie.expires = false
-    newUser.id = result.insertId;
-    return done(null, newUser);
+    const array = await pool.query('SELECT id_u FROM user WHERE email_u = ?', [req.body.email]);
+    if (array[0]) {
+        console.log('Correo usado')
+        return ({ message: 'Correo usado' });
+    } else {
+        const newUser = {
+            user_u: req.body.username,
+            pass_u: req.body.password,
+            email_u: req.body.email
+        };
+        newUser.pass_u = await helpers.encryptPassword(req.body.password);
+        const result = await pool.query('INSERT INTO user set ?', [newUser]);
+        newUser.id = result.insertId;
+    }
 }));
 
 passport.serializeUser((user, done) => {

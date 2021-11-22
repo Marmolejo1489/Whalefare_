@@ -4,7 +4,8 @@
   "description": "Krishna Web Server",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon index.js"
+    "dev": "nodemon index.js",
+    "test": "mocha || true"
   },
   "author": "CarapiaOwO",
   "license": "ISC",
@@ -18,11 +19,15 @@
     "express": "^4.17.1",
     "express-mysql-session": "^2.1.7",
     "express-session": "^1.17.2",
+    "jsonwebtoken": "^8.5.1",
     "mysql": "^2.18.1",
+    "nodemailer": "^6.7.1",
     "passport": "^0.5.0",
     "passport-local": "^1.0.0"
   },
   "devDependencies": {
-    "nodemon": "^2.0.14"
+    "nodemon": "^2.0.15",
+    "mocha": "^4.3.4",
+    "char": "^9.1.3"
   }
 }

@@ -1,7 +1,9 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, /* useContext */ } from 'react';
 import { hashString } from 'react-hash-string'
 import { withRouter } from 'react-router-dom';
 import Axios from 'axios';
+import { Col, Container, Form, Button, Card } from "react-bootstrap";
+//import { AuthContext } from './Auth/AuthContext';
 
 function Profile() {
 
@@ -9,6 +11,8 @@ function Profile() {
     const [email, setEmail] = useState("");
     const [id, setId] = useState("");
     const [clicked, setClicked] = useState(true);
+
+    //const { isLogged } = useContext(AuthContext)
 
     const toEditUser = () => {
         if (clicked) {
@@ -55,40 +59,46 @@ function Profile() {
     })
 
     return (
-        <div className="row justify-content-center">
 
-            <div className="col-4 p-4">
-                <div className="card">
-                    <h3 className="card-header">{user}</h3>
-                    <div>
-                        <img src={"https://www.gravatar.com/avatar/783" + id + "?d=monsterid&s=1024&r=PG"} className="card-img-top bar-sm bar-md d-block" alt="profilePic" />
-                    </div>
+
+        <>
+            <Container>
+                <Col lg={4} md={6} sm={12} className="text-center containerrr">
+
+                    <Card.Header>Tu perfil</Card.Header>
+
+                    <img className="icon-img2" src={"https://www.gravatar.com/avatar/783" + id + "?d=identicon&s=1024&r=PG"} alt="icon" />
                     {
                         //
                         //https://avatars.dicebear.com/api/jdenticon/" + id + ".svg?b=%23000000&r=50
                     }
-                    <div className="container">
-                        <label>Nombre de usuario</label>
-                        <div className="mb-3 input-group">
-                            <input type="text" className="form-control" disabled={true} defaultValue={user} id={"user" + id}
+                    <Form>
+                        <Form.Group>
+                            <Form.Label>Nombre de usuario</Form.Label>
+                            <Form.Control className='campo' type="text" disabled={true} defaultValue={user} id={"user" + id}
                                 onChange={(event) => {
                                     setUser(event.target.value);
                                 }} />
-                        </div>
-                        <label>Correo electrónico</label>
-                        <div className="mb-3 input-group">
-                            <input type="email" className="form-control" disabled={true} defaultValue={email} id={"email" + id}
+                        </Form.Group>
+                        <Form.Group className="mb-3">
+                            <Form.Label>Correo Electrónico</Form.Label>
+                            <Form.Control className='campo' type="email" disabled={true} defaultValue={email} id={"email" + id}
                                 onChange={(event) => {
                                     setEmail(event.target.value);
                                 }}
                             />
+                        </Form.Group>
+
+                        <div className="d-grid gap-2">
+                            <Button variant="primary" size="lg" className="btnn" id={"btn0" + id} hidden={false} onClick={() => { toEditUser(id) }}>Editar</Button>
+                            <Button variant="primary" size="lg" className="btnn" id={"btn1" + id} hidden={true} onClick={() => { editUser(id) }}>Guardar</Button>
+
                         </div>
-                        <button className="btn btn-warning" id={"btn0" + id} hidden={false} onClick={() => { toEditUser(id) }}>Editar</button>
-                        <button className="btn btn-warning" id={"btn1" + id} hidden={true} onClick={() => { editUser(id) }}>Guardar</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+
+                    </Form>
+                </Col>
+            </Container>
+        </>
     )
 }
 

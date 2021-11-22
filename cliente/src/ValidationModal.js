@@ -44,10 +44,28 @@ function ValidationModal(props) {
                 Ingresa un correo válido
             </div>
         )
+    } else if (type === 'unverified') {
+        return (
+            <div>
+                Por favor verifica tu cuenta
+            </div>
+        )
+    } else if (type === true) {
+        return (
+            <div>
+                Correcto
+            </div>
+        )
+    } else if (type === 'wrong') {
+        return (
+            <div>
+                Revisa que los datos ingresados sean correctos
+            </div>
+        )
     } else {
         return (
             <div>
-                
+
             </div>
         )
     }
