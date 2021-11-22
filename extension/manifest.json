@@ -2,7 +2,7 @@
     "manifest_version": 2,
     "name": "Whalefare Extension",
     "description": "Auto fill login forms",
-    "homepage_url": "https://github.com/Marmolejo1489/Whalefare_",
+    "homepage_url": "https://whalefare.netlify.app/",
     "version": "1.0",
     "author": "Whalefare",
     "browser_action": {
