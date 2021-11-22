@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
+import { withRouter } from 'react-router-dom'
 import { signupVal, safetyPass } from './validation'
 import { Alert } from 'reactstrap'
 import ValidationModal from './ValidationModal';
+import { Col, Container, Form, Button } from "react-bootstrap";
+import loginIcon from './images/login.png';
 import Axios from 'axios';
 
 function Signup() {
@@ -24,17 +27,13 @@ function Signup() {
             modalValType: signupVal(newUser)
         }
         setType(type)
-        if (modalType === true) {
+        if (type.modalValType === true) {
             Axios.post("http://localhost:4000/signup", {
                 username: User,
                 password: Password,
                 email: Email
             }).then((response) => {
-                if (response.data.message) {
-                    console.log(response.data.message);
-                } else {
-                    console.log("Estado de loggedIn -> " + response.data.loggedIn)
-                }
+
             });
         } else {
             onShowAlert()
@@ -50,7 +49,7 @@ function Signup() {
         const open = () => {
             window.setTimeout(() => {
                 setOpen(false)
-            }, 1000)
+            }, 2000)
         };
         open();
     }
@@ -60,6 +59,61 @@ function Signup() {
     }
 
     return (
+
+        <>
+            <Container>
+                <Col lg={4} md={6} sm={12} className="containersign text-center">
+                    <div className='containerr2'>
+                        <Alert color="info"
+                            isOpen={modalOpen}
+                        >
+                            {
+                                modalType.modalValType === true ?
+                                    <div>Inicia sesión para verificar tu cuenta</div> :
+                                    <br />
+                            }
+                            <ValidationModal {...modalType} />
+                        </Alert>
+                    </div>
+                    <img className="icon-img" src={loginIcon} alt="icon" />
+
+                    <Form>
+                        <Form.Group className="mb-3" >
+                            <Form.Label>Nombre de usuario</Form.Label>
+                            <Form.Control className='campo' name="username" type="text" placeholder="Escribe aquí." onChange={(event) => {
+                                setUser(event.target.value);
+                            }} />
+                        </Form.Group>
+                        <Form.Group className="mb-3" >
+                            <Form.Label>Correo electrónico</Form.Label>
+                            <Form.Control className='campo' type="email" placeholder="Escribe aquí." onChange={(event) => {
+                                setEmail(event.target.value);
+                            }} />
+                        </Form.Group>
+                        <Form.Group className="mb-3" >
+                            <Form.Label>Contraseña</Form.Label>
+                            <Form.Control className='campo' id="Password" type="password" placeholder="Escribe aaaaquí." onChange={(event) => {
+                                setPassword(event.target.value);
+                                safetyPass(event.target.value);
+                            }} />
+                            <div id="p1"></div>
+                        </Form.Group>
+
+                        <div className="d-grid gap-2">
+                            <Button className='btnn' variant="primary" size="lg" onClick={addUser}>
+                                Crear cuenta
+                            </Button>
+                            <div>
+                                <p>¿Ya tienes una cuenta?</p>
+                                <a href="/login"><small className='reset'>Inicia Sesión</small></a>
+                            </div>
+
+                        </div>
+                    </Form>
+                </Col>
+            </Container>
+        </>
+        /*
         <div className="containerr2">
             <Alert color="info"
                 isOpen={modalOpen}
@@ -98,8 +152,8 @@ function Signup() {
             </div>
 
         </div>
-
+*/
     )
 }
 
-export default Signup;
+export default withRouter(Signup);

@@ -5,12 +5,14 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { Modal, ModalBody, ModalFooter, ModalHeader, Alert, List, Progress } from 'reactstrap';
 import { formVal, safetyPass } from './validation';
 import ValidationModal from './ValidationModal';
+import { AuthContext } from './Auth/AuthContext'
 import Axios from 'axios';
 
 class Home extends Component {
+    static contextType = AuthContext;
     state = {
         data: [],
-        authToken: '',
+        authorized: false,
         modalInsertar: false,
         modalEliminar: false,
         modalAuth: false,
@@ -20,7 +22,7 @@ class Home extends Component {
         },
         hiddenPass: 'password',
         tipoModal: '',
-        idUser: null,
+        idUser: this.context.isLogged.id,
         form: {
             id_c: '',
             id_u: '',
@@ -32,6 +34,7 @@ class Home extends Component {
         }
     }
     modalInsertar = () => {
+        console.log("modalInsertar ID ->", this.state.idUser)
         this.setState({ modalInsertar: !this.state.modalInsertar });
         this.peticionRead();
     }
@@ -59,37 +62,40 @@ class Home extends Component {
     }
 
     peticionRead = () => {
-        Axios.get('http://localhost:4000/login').then((response) => {
-            if (response.data.user) {
-                const id_u = response.data.user[0].id_u
-                Axios.post("http://localhost:4000/read", { id_u }).then(response => {
-                    this.setState({ data: response.data, idUser: id_u });
-                }).catch(error => {
-                    console.log(error.message);
-                })
-            } else {
-                console.log("Response cuando no existe el usuario")
-                
-            }
-        });
+        if (this.state.idUser) {
+            this.setState({ data: [] })
+            Axios.post("http://localhost:4000/read", { id_u: this.state.idUser }).then(response => {
+                this.setState({ data: response.data.result, authorized: response.data.authorized[0].authorized_u });
+                console.log(response.data.result)
+            }).catch(error => {
+                console.log(error.message);
+            })
+
+        } else {
+            console.log("No hay ID")
+        }
     }
 
     peticionPost = async () => {
         const { form } = this.state;
         let validation = formVal(form)
         if (validation === true) {
-            delete form.id_c;
-            await Axios.post("http://localhost:4000/add", {
-                title_c: form.Title,
-                user_c: form.User,
-                pass_c: form.Password,
-                website_c: form.Website,
-                safe_c: form.safetyMeter,
-                id_u: this.state.idUser
-            }).then(response => {
-            }).catch(error => {
-                console.log(error.message);
-            })
+            console.log("Peticion post ID ->", this.state.idUser)
+            if (this.state.idUser !== null) {
+                delete form.id_c;
+                await Axios.post("http://localhost:4000/add", {
+                    title_c: form.Title,
+                    user_c: form.User,
+                    pass_c: form.Password,
+                    website_c: form.Website,
+                    safe_c: form.safetyMeter,
+                    id_u: this.state.idUser
+                }).then(response => {
+                    this.modalInsertar();
+                }).catch(error => {
+                    console.log(error.message);
+                })
+            }
         } else {
             this.onShowAlert()
             this.setState({
@@ -183,14 +189,20 @@ class Home extends Component {
         this.peticionRead();
     }
 
-    handleForm = async e => {
+    handleForm = e => {
         e.persist();
         let sm = false
         if (e.target.name === 'Password') {
             console.log(safetyPass(e.target.value))
             sm = safetyPass(e.target.value)
+            this.setState({
+                form: {
+                    ...this.state.form,
+                    safetyMeter: sm
+                }
+            });
         }
-        await this.setState({
+        this.setState({
             form: {
                 ...this.state.form,
                 [e.target.name]: e.target.value,
@@ -217,11 +229,29 @@ class Home extends Component {
         this.setState({ data: items })
     }
 
-    componentDidMount() {
-        this.peticionRead();
+    safeCounter = () => {
+        let count = 0;
+        for (let index = 0; index < this.state.data.length; index++) {
+            console.log(this.state.data[index].safe_c)
+            if (this.state.data[index].safe_c === 1) {
+                count = + 1;
+            }
+        }
+        let update = Math.round((100 * count / this.state.data.length) * 10) / 10
+        this.setState({ safe: update })
     }
 
-    componentDidUpdate() {
+    sendMail = () => {
+        console.log("Email")
+        const id = this.state.idUser
+        const url = ("http://localhost:4000/jwtauth/" + id)
+        Axios.post(url).then((response) => {
+            this.setState({ authorized: response.data.authorized })
+            console.log(this.state.authorized)
+        })
+    }
+
+    componentDidMount() {
         this.peticionRead();
     }
 
@@ -232,7 +262,23 @@ class Home extends Component {
                 <br /><br /><br />
                 <div className="container p-4">
                     <div>
-                        <Progress value={50}></Progress>
+                        <div className="container" onMouseEnter={this.safeCounter}>
+                            <div className="row justify-content-evenly">
+                                <div className="col-2 text-success">
+                                    <strong>Seguras <br />{(this.state.safe)}%</strong>
+                                </div>
+                                <div className="col-2 text-dark">
+                                    <strong>Inseguras <br />{100 - (this.state.safe)}%</strong>
+                                </div>
+                            </div>
+
+                            <Progress multi>
+                                <Progress color="success" bar animated value={this.state.safe}></Progress>
+                                <Progress color="dark" bar animated value={(100 - this.state.safe)}></Progress>
+                            </Progress>
+                        </div>
+
+
                     </div>
                     <DragDropContext onDragEnd={this.handleOnDragEnd}>
                         <Droppable droppableId="passwords">
@@ -248,13 +294,13 @@ class Home extends Component {
                                                                 <div className='center-text'>
                                                                     <h3 className="card-header bg-dark text-white">{pass.title_c}</h3>
                                                                 </div>
-                                                                {this.state.authToken !== 'token' ?
+                                                                {this.state.authorized !== 1 ?
                                                                     <div className="card-body">
                                                                         <div className="mb-3">
-                                                                            Por favor ingresa el token de acceso
+                                                                            Por favor verifica tu identidad con el enlace que te enviamos al correo
                                                                         </div>
                                                                         <div>
-                                                                            <button className="btn btn-success" onClick={() => { this.seleccionarEmpresa(pass); this.modalAuth(pass) }}><i className="fa fa-key" /></button>
+                                                                            <button className="btn btn-success" onClick={() => { this.sendMail(); this.peticionRead(); }}><i className="fa fa-key" /></button>
                                                                         </div>
                                                                     </div>
                                                                     :
@@ -309,7 +355,7 @@ class Home extends Component {
                                                                             />
 
                                                                         </div>
-                                                                        <div className="text-center">
+                                                                        <div>
                                                                             <br />
                                                                             <button className="btn btn-primary" onClick={() => { this.seleccionarEmpresa(pass); this.modalInsertar() }}><i className="fa fa-pen" /></button>
                                                                             {"   "}
@@ -362,7 +408,7 @@ class Home extends Component {
                             <ValidationModal {...this.state.modalVal} />
                         </Alert>
                         {
-                            this.state.idUser == null ?
+                            this.state.idUser === null ?
                                 <div>Acceso denegado papu Bv</div>
                                 :
                                 <div className="form-group">

@@ -111,9 +111,7 @@ const loginVal = (e) => {
     const email = e.Email
     let expression = /^[-\w.%+]{1,64}@(?:[A-Z0-9-]{1,63}\.){1,125}[A-Z]{2,63}$/i;
     let urlRegex = new RegExp(expression);
-    console.log("Test", urlRegex.test('alog@gmail.com'))
-    console.log("Test", urlRegex.test('aasdgmail.com'))
-
+    
     if (!password || !email) {
         return ('emptyform')
     } else if (!password) {

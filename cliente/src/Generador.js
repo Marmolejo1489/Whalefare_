@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import generator from "generate-password";
+import { Container, Card, Form, Button } from "react-bootstrap";
+
 
 function Generador() {
 
@@ -22,85 +24,76 @@ function Generador() {
     }
 
     return (
-        <div>
-            <h5>Generate a random password in React - Clue Mediator</h5>
-            <div className="container">
-                <div className="row">
-                    <div className="col">
-                        <label>
-                            <span className="lbl-len">Length:</span>
-                            <input
-                                type="number"
+        <>
+
+            <Container>
+                <Card lg={4} md={6} sm={12} className="right">
+                    <Card.Header>Generador de contraseñas</Card.Header>
+
+                    <Form>
+
+                        <Form.Group className="mb-3" controlId="formBasicUser">
+                            <Form.Label>Longitud:</Form.Label>
+                            <Form.Control type="number"
                                 className="input-len form-control"
                                 value={length}
                                 onChange={e => setLength(e.target.value)}
                             />
-                        </label>
-                    </div>
-                </div>
-                <div className="row">
-                    <div className="col">
-                        <label className="form-control">
-                            <input
-                                type="checkbox"
-                                className="mr-1"
-                                checked={isLowerCase}
-                                onChange={() => setIsLowerCase(val => !val)}
-                            />
-                            <span>LowerCase</span>
-                        </label>
-                    </div>
-                    <div className="col">
-                        <label className="form-control">
-                            <input
-                                type="checkbox"
-                                className="mr-1"
-                                checked={isUpperCase}
-                                onChange={() => setIsUpperCase(val => !val)}
-                            />
-                            <span>UpperCase</span>
-                        </label>
-                    </div>
-                </div>
-                <div className="row">
-                    <div className="col">
-                        <label className="form-control">
-                            <input
-                                type="checkbox"
-                                className="mr-1"
-                                checked={isNumbers}
-                                onChange={() => setIsNumbers(val => !val)}
-                            />
-                            <span>Numbers</span>
-                        </label>
-                    </div>
-                    <div className="col">
-                        <label className="form-control">
-                            <input
-                                type="checkbox"
-                                className="mr-1"
-                                checked={isSymbols}
-                                onChange={() => setIsSymbols(val => !val)}
-                            />
-                            <span>Symbols</span>
-                        </label>
-                    </div>
-                </div>
-                <small>Note: At least one should be true.</small>
-                <div className="row">
-                    <div className="col">
-                        <input
-                            type="button"
-                            className="btn btn-dark mt-2 mb-3"
-                            value="Generate Password"
-                            onClick={generatePassword} />
-                        <div>
-                            Password: {password}
+                        </Form.Group>
+                        <div className="mb-3">
+                            <div className='row'>
+                                <div className='col'>
+                                    <Form.Check.Input type="checkbox" className="mr-1"
+                                        checked={isLowerCase}
+                                        onChange={() => setIsLowerCase(val => !val)}
+                                    />
+                                    <Form.Check.Label>{"Minúsculas"}</Form.Check.Label>
+                                    <br />
+                                </div>
+                                <div className='col'>
+                                    <Form.Check.Input type="checkbox"
+                                        className="mr-1"
+                                        checked={isNumbers}
+                                        onChange={() => setIsNumbers(val => !val)}
+                                    />
+                                    <Form.Check.Label>{"Números"}</Form.Check.Label>
+                                    <br />
+                                </div>
+                            </div>
+                            <div className='row'>
+                                <div className='col'>
+                                    <Form.Check.Input type="checkbox"
+                                        className="mr-1"
+                                        checked={isUpperCase}
+                                        onChange={() => setIsUpperCase(val => !val)}
+                                    />
+                                    <Form.Check.Label>{"Mayúsculas"}</Form.Check.Label>
+                                    <br />
+                                </div>
+                                <div className='col'>
+                                    <Form.Check.Input type="checkbox"
+                                        className="mr-1"
+                                        checked={isSymbols}
+                                        onChange={() => setIsSymbols(val => !val)}
+                                    />
+                                    <Form.Check.Label>{"Símbolos"}</Form.Check.Label>
+                                </div>
+                            </div>
+
+                            <small>Nota: Seleccionar al menos un criterio.</small>
                         </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+
+
+                        <div className="d-grid gap-2">
+                            <Button variant="primary" size="lg" className="btn" value="Generate Password" onClick={generatePassword}>Generar</Button>
+                            <Card.Footer>
+                                {password}
+                            </Card.Footer>
+                        </div>
+                    </Form>
+                </Card>
+            </Container>
+        </>
     );
 }
 
