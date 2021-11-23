@@ -17,7 +17,6 @@ function App() {
                 isAuth: response.data.isAuth,
                 id: response.data.id
             });
-            setIsLoading(false)
             
         }).catch((err) => {
             console.log(err)
@@ -25,10 +24,6 @@ function App() {
 
 
     }, []);
-
-    if (isLoading) {
-        return <div className="App">Loading...</div>;
-    }
 
     Axios.defaults.withCredentials = true;
 
