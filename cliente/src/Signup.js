@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { withRouter } from 'react-router-dom'
+import { withRouter, NavLink } from 'react-router-dom'
 import { signupVal, safetyPass } from './validation'
-import { Alert } from 'reactstrap'
+import { Alert, Popover, PopoverBody, PopoverHeader } from 'reactstrap'
 import ValidationModal from './ValidationModal';
 import { Col, Container, Form, Button } from "react-bootstrap";
 import loginIcon from './images/login.png';
@@ -14,7 +14,7 @@ function Signup() {
     const [Email, setEmail] = useState("");
     const [modalType, setType] = useState("")
     const [modalOpen, setOpen] = useState(false);
-
+    const [popOver, setPopOver] = useState(false)
     const addUser = () => {
         const newUser = {
             Password: Password,
@@ -28,7 +28,7 @@ function Signup() {
         }
         setType(type)
         if (type.modalValType === true) {
-            Axios.post("http://localhost:4000/signup", {
+            Axios.post("https://whalefare.herokuapp.com/signup", {
                 username: User,
                 password: Password,
                 email: Email
@@ -38,11 +38,7 @@ function Signup() {
         } else {
             onShowAlert()
         }
-        console.log("passSafety -> ", safetyPass(Password))
-        /*
-                
-                */
-    };
+    }
 
     const onShowAlert = () => {
         setOpen(true)
@@ -91,21 +87,42 @@ function Signup() {
                             }} />
                         </Form.Group>
                         <Form.Group className="mb-3" >
-                            <Form.Label>Contraseña</Form.Label>
-                            <Form.Control className='campo' id="Password" type="password" placeholder="Escribe aaaaquí." onChange={(event) => {
+                            <Form.Label>Contraseña   </Form.Label><i className="fa fa-info-circle" type="button" id="Popover1"></i>
+                            <div>
+                                <Popover
+                                    flip
+                                    isOpen={popOver}
+                                    target="Popover1"
+                                    toggle={() => { setPopOver(!popOver) }}
+                                >
+                                    <PopoverHeader>
+                                        Sugerencias
+                                    </PopoverHeader>
+                                    <PopoverBody>
+                                        Te recomendamos usar contraseñas que contengan mayúsculas y minúsculas, signos de puntuación (<i>@</i>, <i>$</i>, <i>!</i>, <i>%</i>, <i>*</i>, <i>#</i>, <i>?</i>, <i>.</i>, <i>:</i>, <i>;</i>) y números.
+                                    </PopoverBody>
+                                </Popover>
+                            </div>
+                            <Form.Control className='campo' id="Password" type="password" placeholder="Escribe aquí." onChange={(event) => {
                                 setPassword(event.target.value);
                                 safetyPass(event.target.value);
                             }} />
                             <div id="p1"></div>
                         </Form.Group>
-
+                        <p>
+                            Al hacer clic en <i>Crear cuenta</i>, <br />aceptas nuestras
+                            <NavLink to="/terminos" style={{ color: 'blue' }}> condiciones </NavLink>
+                            y la <NavLink to="/politica" style={{ color: 'blue' }}>política de privacidad</NavLink>.
+                        </p>
                         <div className="d-grid gap-2">
                             <Button className='btnn' variant="primary" size="lg" onClick={addUser}>
                                 Crear cuenta
                             </Button>
                             <div>
                                 <p>¿Ya tienes una cuenta?</p>
-                                <a href="/login"><small className='reset'>Inicia Sesión</small></a>
+                                <NavLink to="/login">
+                                    Inicia sesión
+                                </NavLink>
                             </div>
 
                         </div>

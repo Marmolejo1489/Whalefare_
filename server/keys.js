@@ -1,7 +1,7 @@
 module.exports = {
     database: {
-    host: 'localhost',
-    user: 'root',
-    password: 'p4r4.s3l3n3',
-    database: 'krishna_sql'
+    host: 'us-cdbr-east-04.cleardb.com',
+    user: 'bd587c19736736',
+    password: '254c050e',
+    database: 'heroku_c3a0c39fb10bc00'
 }};

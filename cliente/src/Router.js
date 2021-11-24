@@ -17,6 +17,7 @@ import {
     BrowserRouter as Router,
     Switch,
     Route,
+    NavLink,
 
 } from 'react-router-dom'
 import { AuthContext } from './Auth/AuthContext';
@@ -35,18 +36,18 @@ function RoutesManagement() {
                                 <h1><span>Almacena</span>, genera y aplica contraseñas</h1>
                                 <br />
                                 <p className='details'>Whalefare te ofrece un entorno seguro para almacenar, generar y aplicar contraseñas.</p>
-                                <a href="./login" className='cv-btn'>Comienza ya</a>
+                                <NavLink to="/signup" className='cv-btn'>Comienza ya</NavLink>
                             </div>
                         </div>
                     </Route>
                     <Route path="/login">
                         <div className='main2'>
-                        <NotLoggedRoute isAuth={isLogged.isAuth} Component={Login} />
+                            <NotLoggedRoute isAuth={isLogged.isAuth} Component={Login} />
                         </div>
                     </Route>
                     <Route path="/signup">
                         <div className='main3'>
-                        <NotLoggedRoute isAuth={isLogged.isAuth} Component={Signup} />
+                            <NotLoggedRoute isAuth={isLogged.isAuth} Component={Signup} />
                         </div>
                     </Route>
                     <Route path="/home">
@@ -58,7 +59,7 @@ function RoutesManagement() {
                     </Route>
                     <Route path="/profile">
                         <div className='main5'>
-                        <LoggedRoute isAuth={isLogged.isAuth} Component={Profile} />
+                            <LoggedRoute isAuth={isLogged.isAuth} Component={Profile} />
                         </div>
                     </Route>
                     <Route path="/generar">

@@ -18,8 +18,8 @@ passport.use('local.login', new LocalStrategy({
             console.log('Bienvenido ' + user.user_u)
             console.log(validPassword)
             req.session.isLogged = true;
-            req.session.user = user;
-            console.log(req.session.user)
+            req.session.user = array[0];
+            console.log("req.session.user en passport ->", req.session.user)
             const id = array[0].id_u;
             console.log(id)
             const token = jwt.sign({ id }, "jwtSecret", {
