@@ -21,10 +21,10 @@ const correo = (url, email) => {
     })
 
     var mailOptions = {
-        form: 'Remitente',
+        from: '"Whalefare" <carapiaaguilar.krishna@gmail.com>',
         to: email,
-        subject: 'Verifica que eres tú',
-        html: 'Confirma que eres tú dando click al siguiente <a href="' + url + '">enlace</a><br><br><br>Si no fuiste tú, ignora este correo.<br><br><br>-Whalefare'
+        subject: 'Verifica tu identidad',
+        html: 'Hola:<br> Una contraseña fue añadida recientemente en tu cuenta Whalefare.<br>Si fuiste tú, haz clic <a href="' + url + '" target="_blank">aquí</a> para verificar tu identidad; <br>si no, quizá deberías asegurarte de que no haya problemas en el paraíso.<br> Saludos coridales, Krishna. ¿Problemas con el vínculo? <br>Accede aquí:' + url + '.'
     }
 
     transporter.sendMail(mailOptions, (error, info) => {
@@ -59,7 +59,7 @@ router.post('/jwtauth/:id', async (req, res) => {
                 maxAge: 10 * 60 * 1000,
             })
             req.session.jwtauth = token;
-            const url = ("http://localhost:4000/authorization/" + token)
+            const url = ("https://whalefare.herokuapp.com/authorization/" + token)
             correo(url, array[0].email_u);
             res.send({ authorization: false, message: 'unverified' });
         }

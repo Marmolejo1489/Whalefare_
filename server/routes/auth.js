@@ -22,10 +22,9 @@ const correo = (url, email) => {
     var mailOptions = {
         from: '"Whalefare" <carapiaaguilar.krishna@gmail.com>',
         to: email,
-        subject: 'Confirma tu dirección de email',
-        html: 'Ayúdanos a mantener tu cuenta de Whalefare a salvo confirmando que esta es tu dirección de email. <br> <a href="' + url + '"> Confirmar dirección email</a><br><br>Si necesitas más información nos puedes contactar.<br><br>-Whalefare'
+        subject: 'Verifica tu cuenta',
+        html: 'Hola:<br>Una cuenta de Whalefare asociada a este correo fue creada recientemente.<br>Si fuiste tú, haz clic <a href="' + url + '" target="_blank">aquí<a> para verificar tu cuenta;<br>si no, quizá deberías asegurarte de que no haya problemas en el paraíso.<br>Saludos cordiales, Krishna. <br>¿Problemas con el vínculo?<br>Accede aquí:' + url + '.'
     }
-
     transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
             console.log("El email no se envió", error)
@@ -81,6 +80,7 @@ router.post('/login', async (req, res, next) => {
                 failureRedirect: '/',
                 failureFlash: true,
             }, function () {
+                console.log("User en login passport auth->", req.session.user)
                 res.send({ isLogged: req.session.isLogged, id: req.session.user.id_u });
             })(req, res, next);
 
@@ -95,7 +95,7 @@ router.post('/login', async (req, res, next) => {
                 maxAge: 10 * 60 * 1000,
             })
             req.session.jwt = token;
-            const url = ("http://localhost:4000/confirmation/" + token)
+            const url = ("https://whalefare.herokuapp.com/confirmation/" + token)
 
             correo(url, req.body.email);
 
@@ -111,10 +111,10 @@ router.post('/login', async (req, res, next) => {
 
 //Función - Cierre de sesión
 
-router.post('/logout', async (req, res) => {
-    
-    console.log(req.session.user.id_u)
-    await pool.query('UPDATE user set ? WHERE id_u = ?', [{ authorized_u: false }, req.session.user.id_u]);
+router.post('/logout/:id_u', async (req, res) => {
+    const id = req.params.id_u
+    console.log(id)
+    await pool.query('UPDATE user set ? WHERE id_u = ?', [{ authorized_u: false }, id]);
     req.logOut();
     req.session.destroy();
     res.clearCookie('userId');
@@ -127,17 +127,21 @@ router.post('/logout', async (req, res) => {
 
 //Función - Datos de la sesión
 
-router.get('/profile', (req, res) => {
-    if (req.session.user) {
-        res.send({ loggedIn: true, user: req.session.user });
+router.get('/profile/:id_u', async (req, res) => {
+    console.log(req.params)
+    const id = req.params.id_u
+    if (id !== 0) {
+        const user = await pool.query('SELECT email_u, user_u from user WHERE id_u = ?', [id]);
+        res.send({ loggedIn: true, user: { email: user[0].email_u, user: user[0].user_u } });
     } else {
         res.send({ loggedIn: false });
     }
 });
 
-//Función - Verificación de JWT
+//Petición - Verificación de JWT
 
-const verifyJWT = (req, res, next) => {
+router.get('/jwt', (req, res) => {
+    console.log("/jwt working")
     const token = req.session.jwtsecret;
     res.cookie('secrettoken', token, {
         secure: true,
@@ -151,18 +155,14 @@ const verifyJWT = (req, res, next) => {
             } else {
                 req.userId = decoded.id
                 console.log("id del usuario ->", req.userId)
+                res.send({ isAuth: true, id: req.userId })
                 next();
             }
         })
     } else {
-        res.json({ isAuth: false })
+        res.send({ isAuth: false, id: null })
     }
-}
 
-//Petición - Verificación de JWT
-
-router.get('/jwt', verifyJWT, (req, res) => {
-    res.send({ isAuth: true, id: req.userId })
 })
 
 //Envío de correo - verificación

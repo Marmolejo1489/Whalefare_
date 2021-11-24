@@ -1,17 +1,17 @@
-import React, { useEffect, useState, useRef, /* useContext */ } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { hashString } from 'react-hash-string'
 import { withRouter } from 'react-router-dom';
-import Axios from 'axios';
 import { Col, Container, Form, Button, Card } from "react-bootstrap";
-//import { AuthContext } from './Auth/AuthContext';
+import { AuthContext } from './Auth/AuthContext';
+import Axios from 'axios';
 
 function Profile() {
 
+    const { isLogged } = useContext(AuthContext);
     const [user, setUser] = useState("");
     const [email, setEmail] = useState("");
-    const [id, setId] = useState("");
+    const [id, setId] = useState();
     const [clicked, setClicked] = useState(true);
-
     //const { isLogged } = useContext(AuthContext)
 
     const toEditUser = () => {
@@ -25,7 +25,7 @@ function Profile() {
         }
     }
 
-    const editUser = (id_u) => {
+    const editUser = () => {
         if (!clicked) {
             document.getElementById("btn0" + id).hidden = false;
             document.getElementById("btn1" + id).hidden = true;
@@ -44,19 +44,13 @@ function Profile() {
         }
     }
 
-    const mounted = useRef();
     useEffect(() => {
-        if (!mounted.current) {
-            Axios.get('http://localhost:4000/profile').then((response) => {
-                if (response.data.user) {
-                    setUser(response.data.user[0].user_u);
-                    setId(hashString(response.data.user[0].email_u));
-                    setEmail(response.data.user[0].email_u);
-                }
-            });
-            mounted.current = true;
-        }
-    })
+        setId(hashString(isLogged.id));
+        Axios.get("https://whalefare.herokuapp.com/profile/" + isLogged.id).then((response) => {
+            setEmail(response.data.user.email)
+            setUser(response.data.user.user)
+        })
+    }, [])
 
     return (
 
@@ -67,11 +61,7 @@ function Profile() {
 
                     <Card.Header>Tu perfil</Card.Header>
 
-                    <img className="icon-img2" src={"https://www.gravatar.com/avatar/783" + id + "?d=identicon&s=1024&r=PG"} alt="icon" />
-                    {
-                        //
-                        //https://avatars.dicebear.com/api/jdenticon/" + id + ".svg?b=%23000000&r=50
-                    }
+                    <img className="icon-img2" src={"https://www.gravatar.com/avatar/783" + isLogged.id + "?d=identicon&s=1024&r=PG"} alt="icon" />
                     <Form>
                         <Form.Group>
                             <Form.Label>Nombre de usuario</Form.Label>

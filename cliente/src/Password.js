@@ -57,7 +57,7 @@ function Password(props) {
             document.getElementById("title" + props.id_c).disabled = true;
             setClicked(true)
 
-            await Axios.put("http://localhost:4000/edit/" + id_c, {
+            await Axios.put("https://whalefare.herokuapp.com/edit/" + id_c, {
                 title_c: Title,
                 user_c: User,
                 pass_c: Password,
@@ -70,7 +70,7 @@ function Password(props) {
     const deletePass = (id_c) => {
         console.log("Entrando a borrar")
         //Funcion de actualizar
-        Axios.delete("http://localhost:4000/delete/" + id_c)
+        Axios.delete("https://whalefare.herokuapp.com/" + id_c)
     }
 
     return (

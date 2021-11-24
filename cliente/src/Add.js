@@ -35,7 +35,7 @@ function Add() {
   */
 
   const addPassword = () => {
-    Axios.post("http://localhost:4000/add", {
+    Axios.post("https://whalefare.herokuapp.com/add", {
       title_c: Title,
       user_c: User,
       pass_c: Password,

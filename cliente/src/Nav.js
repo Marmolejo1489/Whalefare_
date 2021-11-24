@@ -9,7 +9,7 @@ function Nav() {
     const [isLogged, setIsLogged] = useState();
 
     const check = () => {
-        Axios.get('http://localhost:4000/profile').then((response) => {
+        Axios.get('https://whalefare.herokuapp.com/profile').then((response) => {
             if (response.data.loggedIn) {
                 setIsLogged(response.data.loggedIn)
             } else {
@@ -19,7 +19,7 @@ function Nav() {
     }
 
     const logOut = () => {
-        Axios.post("http://localhost:4000/logout");
+        Axios.post("https://whalefare.herokuapp.com/logout");
         
     }
 
