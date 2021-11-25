@@ -1,0 +1,39 @@
+{
+    "manifest_version": 2,
+    "name": "Whalefare Extension",
+    "description": "Auto fill login forms",
+    "homepage_url": "https://whalefare.netlify.app/",
+    "version": "1.0",
+    "author": "Whalefare",
+    "browser_action": {
+        "default_title": "Click derecho para configurar!",
+        "default_popup": "index.html",
+        "default_icon": "./img/icon.png"
+    },
+    "icons": {
+        "16": "./img/16.png",
+        "24": "./img/24.png",
+        "32": "./img/32.png",
+        "64": "./img/64.png",
+        "128": "./img/128.png"
+    },
+    "permissions": [
+        "tabs",
+        "http://*/*",
+        "https://*/*"
+    ],
+    "content_scripts": [
+        {
+            "matches": [
+                "http://*/*",
+                "https://*/*"
+            ],
+            "js": ["./js/jquery-1.8.2.min.js", "./js/run.js"],
+            "run_at": "document_end"
+        }
+    ],
+    "options_page": "options.html",
+    "background": {
+        "page": "background.html"
+    }
+}
