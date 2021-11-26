@@ -24,7 +24,7 @@ const correo = (url, email) => {
         from: '"Whalefare" <carapiaaguilar.krishna@gmail.com>',
         to: email,
         subject: 'Verifica tu identidad',
-        html: 'Hola:<br> Una contraseña fue añadida recientemente en tu cuenta Whalefare.<br>Si fuiste tú, haz clic <a href="' + url + '" target="_blank">aquí</a> para verificar tu identidad; <br>si no, quizá deberías asegurarte de que no haya problemas en el paraíso.<br> Saludos coridales, Krishna. ¿Problemas con el vínculo? <br>Accede aquí:' + url + '.'
+        html: 'Hola:<br><br> Una contraseña fue añadida recientemente en tu cuenta Whalefare.<br>Si fuiste tú, haz clic <a href="' + url + '" target="_blank">aquí</a> para verificar tu identidad; <br>si no, quizá deberías asegurarte de que no haya problemas en el paraíso.<br><br> Saludos cordiales, Krishna. ¿Problemas con el vínculo? <br><br>Accede aquí: ' + url + '.'
     }
 
     transporter.sendMail(mailOptions, (error, info) => {

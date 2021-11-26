@@ -12,7 +12,6 @@ import Terminos from './Terminos';
 import Generador from './Generador';
 import LoggedRoute from './LoggedRoute';
 import NotLoggedRoute from './NotLoggedRoute';
-//import { AuthProvider } from "./Auth/AuthContext";
 import {
     BrowserRouter as Router,
     Switch,
@@ -23,8 +22,6 @@ import {
 import { AuthContext } from './Auth/AuthContext';
 function RoutesManagement() {
     const { isLogged } = useContext(AuthContext);
-    console.log(isLogged)
-
     return (
         <Router>
             <Navbar />

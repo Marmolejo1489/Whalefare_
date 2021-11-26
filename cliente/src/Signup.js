@@ -22,7 +22,6 @@ function Signup() {
             Email: Email
         }
         modalVal();
-        console.log("Form validation -> ", signupVal(newUser))
         let type = {
             modalValType: signupVal(newUser)
         }
@@ -112,7 +111,7 @@ function Signup() {
                         <p>
                             Al hacer clic en <i>Crear cuenta</i>, <br />aceptas nuestras
                             <NavLink to="/terminos" style={{ color: 'blue' }}> condiciones </NavLink>
-                            y la <NavLink to="/politica" style={{ color: 'blue' }}>política de privacidad</NavLink>.
+                            y la <NavLink to="/politicas" style={{ color: 'blue' }}>política de privacidad</NavLink>.
                         </p>
                         <div className="d-grid gap-2">
                             <Button className='btnn' variant="primary" size="lg" onClick={addUser}>
@@ -130,46 +129,6 @@ function Signup() {
                 </Col>
             </Container>
         </>
-        /*
-        <div className="containerr2">
-            <Alert color="info"
-                isOpen={modalOpen}
-            >
-                <ValidationModal {...modalType} />
-            </Alert>
-            <h1>Registrarme</h1>
-            <div className="container">
-                <label>Nombre de usuario</label>
-                <div className="input-container">
-                    <input type="text" className="text_area" placeholder="Escribe aquí." name="username"
-                        onChange={(event) => {
-                            setUser(event.target.value);
-                        }} />
-                </div>
-                <label>Correo electrónico</label>
-                <div className="input-container">
-                    <input type="email" className="text_area" placeholder="Escribe aquí." name="email"
-                        onChange={(event) => {
-                            setEmail(event.target.value);
-                        }} />
-                </div>
-                <label>Contraseña</label>
-                <div className="input-container">
-                    <input type="password" id="Password" className="text_area" placeholder="Escribe aquí." name="password"
-                        onChange={(event) => {
-                            setPassword(event.target.value);
-                            safetyPass(event.target.value);
-                        }} />
-                    <div id="p1"></div>
-                </div>
-                <button className="btn btn-primary" onClick={addUser}>Crear cuenta</button>
-                <p>¿Ya tienes una cuenta?</p>
-                <p><a className="link" href="/login">Inicia sesión</a></p>
-                <div className="container"></div>
-            </div>
-
-        </div>
-*/
     )
 }
 

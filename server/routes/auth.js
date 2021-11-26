@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 const router = express.Router();
 const passport = require('passport');
 const nodemailer = require('nodemailer')
+const helpers = require('../lib/helpers')
 
 //Envío de correo
 
@@ -73,7 +74,7 @@ router.post('/login', async (req, res, next) => {
     let user = null;
     console.log("Respuesta del query login ->", array)
     if (array[0]) {
-        if (array[0].verified_u !== null) {
+        if (array[0].verified_u === 1) {
             console.log('Diferente de null')
             passport.authenticate('local.login', {
                 successRedirect: '/',
@@ -186,5 +187,66 @@ router.get("/confirmation/:token", (req, res) => {
 
     }
 })
+
+//Editar usuario 
+router.put('/profileedit/:id_u', async (req, res) => {
+
+    const { id_u } = req.params;
+    const { password, user, email } = req.body;
+    const array = await pool.query('SELECT * FROM user WHERE id_u = ?', [id_u]);
+    const validPassword = await helpers.matchPassword(password, array[0].pass_u);
+    const validEmail = await pool.query('SELECT id_u FROM user WHERE email_u = ?', [email])
+    console.log(validEmail)
+
+    let newUser = {}
+    if (validPassword) {
+        console.log("Verified password")
+        if (validEmail[0] === id_u) {
+            console.log("same email")
+            if (user && email) {
+                newUser = {
+                    email_u: email,
+                    user_u: user
+                };
+            } else if (email) {
+                newUser = {
+                    email_u: email
+                };
+            } else if (user) {
+                newUser = {
+                    user_u: user
+                };
+            }
+            console.log(newUser)
+            await pool.query('UPDATE user SET ? WHERE id_u = ?', [newUser, id_u]);
+            return { message: 'success' }
+        } else {
+            console.log("different email")
+            if (user && email) {
+                newUser = {
+                    email_u: email,
+                    user_u: user,
+                    verified_u: false
+                };
+            } else if (email) {
+                newUser = {
+                    email_u: email,
+                    verified_u: false
+                };
+            } else if (user) {
+                newUser = {
+                    user_u: user,
+                    verified_u: false
+                };
+            }
+            console.log(newUser, "Usuario actualizado")
+            await pool.query('UPDATE user SET ? WHERE id_u = ?', [newUser, id_u]);
+            return { message: 'success' }
+        }
+
+    } else {
+        return { message: 'password' }
+    }
+});
 
 module.exports = router;

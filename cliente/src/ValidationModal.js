@@ -53,25 +53,25 @@ function ValidationModal(props) {
     } else if (type === true) {
         return (
             <div>
-                Correcto
-            </div>
-        )
-    } else if (type === 'terms') {
-        return (
-            <div>
-                Para registrarte necesitas aceptar los términos y condiciones.
+
             </div>
         )
     } else if (type === 'wrong') {
         return (
             <div>
-                Revisa que los datos ingresados sean correctos
+                Revisa que tu cuenta esté verificada
+            </div>
+        )
+    } else if (type === 'success') {
+        return (
+            <div>
+
             </div>
         )
     } else {
         return (
             <div>
-
+                Revisa que los datos ingresados sean correctos
             </div>
         )
     }

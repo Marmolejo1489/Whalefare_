@@ -1,4 +1,3 @@
-//Librerías
 import React, { Component } from 'react';
 import generator from "generate-password";
 import { withRouter } from 'react-router-dom';
@@ -16,13 +15,11 @@ class Home extends Component {
         authorized: false,
         modalInsertar: false,
         modalEliminar: false,
-        modalAuth: false,
         popOver: false,
         modalVal: {
             modalValOpen: false,
             modalValType: '',
         },
-        hiddenPass: 'password',
         tipoModal: '',
         idUser: this.context.isLogged.id,
         form: {
@@ -38,10 +35,6 @@ class Home extends Component {
     modalInsertar = () => {
         this.setState({ modalInsertar: !this.state.modalInsertar });
         this.peticionRead();
-    }
-
-    modalAuth = () => {
-        this.setState({ modalAuth: !this.state.modalAuth });
     }
 
     modalVal = () => {
@@ -84,7 +77,7 @@ class Home extends Component {
                     user_c: form.User,
                     pass_c: form.Password,
                     website_c: form.Website,
-                    safe_c: form.safetyMeter,
+                    safe_c: safetyPass(form.Password),
                     id_u: this.state.idUser
                 }).then(response => {
                     this.modalInsertar();
@@ -101,15 +94,9 @@ class Home extends Component {
                     modalValOpen: true
                 }
             }, () => {
-                console.log('new state', this.state.modalVal.modalValType);
             })
 
         }
-        //Validación
-        /*
-                
-        */
-
     }
 
     peticionPut = async () => {
@@ -123,7 +110,7 @@ class Home extends Component {
                 user_c: form.User,
                 pass_c: form.Password,
                 website_c: form.Website,
-                safety_c: form.safetyMeter,
+                safety_c: safetyPass(form.Password),
             }).then(response => {
                 this.modalInsertar();
             }).catch(error => {
@@ -137,11 +124,8 @@ class Home extends Component {
                     modalValOpen: true
                 }
             }, () => {
-                console.log('new state', this.state.modalVal.modalValType);
             })
-
         }
-
     }
 
     peticionDelete = () => {
@@ -187,7 +171,6 @@ class Home extends Component {
 
     handleForm = e => {
         e.persist();
-        let sm = false
         if (e.target.name === 'Password') {
             this.setState({
                 form: {
@@ -200,7 +183,6 @@ class Home extends Component {
             form: {
                 ...this.state.form,
                 [e.target.name]: e.target.value,
-                safetyMeter: sm
             }
         });
     }
@@ -253,6 +235,19 @@ class Home extends Component {
         document.getElementById("Password").value = pwd;
     }
 
+    showingPassword = (encryption) => {
+        Axios.post('https://whalefare.herokuapp.com/decryptpass',
+            {
+                password: encryption.pass_c,
+                iv: encryption.key_c
+            })
+            .then((response) => {
+                document.getElementById("pass" + encryption.id_c).value = response.data;
+                document.getElementById("pass" + encryption.id_c).type = "text";
+                document.getElementById("pass" + encryption.id_c).class = "fa fa-eye-slash";
+            });
+    };
+
     componentDidMount() {
         this.peticionRead();
     }
@@ -279,9 +274,7 @@ class Home extends Component {
                                 <Progress color="dark" bar animated value={(100 - this.state.safe)}></Progress>
                             </Progress>
                         </div>
-
-
-                    </div>
+                   </div>
                     <DragDropContext onDragEnd={this.handleOnDragEnd}>
                         <Droppable droppableId="passwords">
                             {(provided) => (
@@ -331,18 +324,20 @@ class Home extends Component {
                                                                         <div className="mb-3 input-group">
                                                                             <input
                                                                                 name="Password"
-                                                                                type={this.state.hiddenPass}
+                                                                                type={'password'}
                                                                                 id={"pass" + pass.id_c}
                                                                                 className="form-control"
                                                                                 disabled={true}
-                                                                                value={pass.pass_c}
+                                                                                defaultValue={pass.pass_c}
                                                                             />
                                                                             <span
                                                                                 className="input-group-text"
                                                                             >
                                                                                 <i id={"eye" + pass.id_c}
                                                                                     className="fa fa-eye"
-                                                                                    aria-hidden="true">
+                                                                                    aria-hidden="true"
+                                                                                    onClick={() => { this.showingPassword(pass); }}
+                                                                                >
                                                                                 </i>
                                                                             </span>
                                                                         </div>
@@ -360,7 +355,6 @@ class Home extends Component {
                                                                         <div>
                                                                             <br />
                                                                             <button className="btn btn-primary" onClick={() => { this.seleccionarEmpresa(pass); this.modalInsertar() }}><i className="fa fa-pen" /></button>
-                                                                            {"   "}
                                                                             <button className="btn btn-danger" onClick={() => { this.seleccionarEmpresa(pass); this.setState({ modalEliminar: true }) }}><i className="fa fa-trash" /></button>
                                                                         </div>
                                                                     </div>
@@ -381,22 +375,6 @@ class Home extends Component {
 
                 </div>
                 <button className="btn btn-success" onClick={() => { this.setState({ form: null, tipoModal: 'insertar' }); this.modalInsertar() }}>Agregar contraseña</button>
-
-                <Modal isOpen={this.state.modalAuth}>
-                    <ModalHeader style={{ display: 'block' }}>
-                        <span style={{ float: 'right' }} onClick={() => this.modalAuth()}>x</span>
-                    </ModalHeader>
-                    <ModalBody>
-                        <div>
-                            Por favor ingresa tu token de acceso
-                            <input type='text' onChange={this.handleToken} />
-
-                        </div>
-                    </ModalBody>
-                    <ModalFooter>
-                        <button className="btn btn-success" onClick={() => this.modalAuth()}>Aceptar</button>
-                    </ModalFooter>
-                </Modal>
 
                 <Modal isOpen={this.state.modalInsertar}>
 
@@ -426,7 +404,7 @@ class Home extends Component {
                                             flip
                                             isOpen={this.state.popOver}
                                             target="Popover1"
-                                            toggle={() => { this.setstate({ popOver: !this.state.popOver }) }}
+                                            toggle={() => { this.setState({ popOver: !this.state.popOver }) }}
                                         >
                                             <PopoverHeader>
                                                 Sugerencias
@@ -442,7 +420,7 @@ class Home extends Component {
                                             className="input-group-text"
                                             onClick={() => { this.generatePassword() }}
                                         >
-                                            <i className="fa fa-arrows-rotate"
+                                            <i className="fa fa-dice"
                                                 aria-hidden="true">
                                             </i>
                                         </span>

@@ -48,23 +48,23 @@ function validar_datosr2(a, b, c) {
     }
 }
 
-function validar_pass(a, b, c) {
-    //A -> url, B -> Usuario, C -> Nombre
-    let urlRegex = /^((ftp|http|https):\/\/)?www\.([A-z]+)\.([A-z]{2,})/;
+const updateVal = (e) => {
+    const { user, email, password } = e
+    let expression = /^[-\w.%+]{1,64}@(?:[A-Z0-9-]{1,63}\.){1,125}[A-Z]{2,63}$/i;
+    let urlRegex = new RegExp(expression);
 
-    if (b.length === 0 || a.length === 0 || c.length === 0) {
-        alert("¡Llena todos los campos!");
-    } else if (b.length === 0) {
-        alert("¡Ingresa el usuario que corresponde a tu contraseña!");
-    } else if (a.length === 0) {
-        alert("¡Ingresa el dominio!");
-    } else if (c.length === 0) {
-        alert("¡Ingresa el nombre!");
-    } else if (!urlRegex.test(a)) {
-        alert("¡Ingresa un dominio válido!");
-    }
-    else {
-
+    if (!password || !email || !user) {
+        return ('emptyform')
+    } else if (!password) {
+        return ('password')
+    } else if (!user) {
+        return ('user')
+    } else if (!email) {
+        return ('email')
+    } else if (!urlRegex.test(email)) {
+        return ('email')
+    } else {
+        return (true)
     }
 
 }
@@ -130,7 +130,6 @@ const signupVal = (e) => {
     const password = e.Password
     const email = e.Email
     const user = e.User
-    const terms = e.Terms
     let expression = /^[-\w.%+]{3,64}@(?:[A-Z0-9-]{1,63}\.){1,125}[A-Z]{2,63}$/i;
     let mediumPassword = new RegExp('(?=.*[A-Z])(?=.*[0-9]).{6}');
     let emailRegex = new RegExp(expression);
@@ -143,8 +142,6 @@ const signupVal = (e) => {
         return ('email');
     } else if (!user) {
         return ('user')
-    } else if (!terms) {
-        return ('terms')
     } else if (password.length < 5) {
         return ('password')
     } else if (email.length < 5) {
@@ -162,7 +159,7 @@ const signupVal = (e) => {
 }
 
 const safetyPass = (e) => {
-    let strongPassword = new RegExp('(?=.*[A-Z])(?=.*[@$!%*#?&"<>.,:;]).{8}');
+    let strongPassword = new RegExp('(?=.*[A-Z])(?=.*[@$!%*#?&"<>.,:;+-^´]).{8}');
     let mediumPassword = new RegExp('(?=.*[A-Z])(?=.*[0-9]).{6}');
     let passwordSafety
     if (strongPassword.test(e)) {
@@ -183,4 +180,4 @@ const safetyPass = (e) => {
     }
 }
 
-module.exports = { formVal, loginVal, signupVal, validar_datosr, validar_datosr2, validar_pass, safetyPass }
+module.exports = { formVal, loginVal, signupVal, validar_datosr, validar_datosr2, updateVal, safetyPass }
