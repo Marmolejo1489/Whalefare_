@@ -16,7 +16,7 @@ const correo = (url, email) => {
         secure: true,
         auth: {
             user: 'carapiaaguilar.krishna@gmail.com',
-            pass: 'Cheche21.'
+            pass: 'Krishna01.'
         },
     })
 
