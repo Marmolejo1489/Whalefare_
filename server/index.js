@@ -17,7 +17,7 @@ app.set('port', process.env.PORT || 4000);
 
 //Middlewares
 app.use(cors({
-    origin: ["https://whalefare.netlify.app", "https://whalefare.herokuapp.com"],
+    origin: ["https://whalefare.netlify.app", "https://whalefare1.herokuapp.com"],
     methods: ["GET", "POST", "DELETE", "PUT"],
     credentials: true
 }));

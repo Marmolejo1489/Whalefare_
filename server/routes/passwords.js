@@ -59,7 +59,7 @@ router.post('/jwtauth/:id', async (req, res) => {
                 maxAge: 10 * 60 * 1000,
             })
             req.session.jwtauth = token;
-            const url = ("https://whalefare.herokuapp.com/authorization/" + token)
+            const url = ("https://whalefare1.herokuapp.com/authorization/" + token)
             correo(url, array[0].email_u);
             res.send({ authorization: false, message: 'unverified' });
         }

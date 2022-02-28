@@ -96,7 +96,7 @@ router.post('/login', async (req, res, next) => {
                 maxAge: 10 * 60 * 1000,
             })
             req.session.jwt = token;
-            const url = ("https://whalefare.herokuapp.com/confirmation/" + token)
+            const url = ("https://whalefare1.herokuapp.com/confirmation/" + token)
 
             correo(url, req.body.email);
 
