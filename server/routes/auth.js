@@ -180,6 +180,7 @@ router.get("/confirmation/:token", (req, res) => {
                     req.userId = decoded.id
                     console.log(req.userId)
                     await pool.query('UPDATE user set ? WHERE id_u = ?', [{ verified_u: true }, req.userId]);
+                    //res.redirect('https://whalefare.netlify.app/profile')
                 }
             })
         }

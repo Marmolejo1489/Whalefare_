@@ -17,7 +17,7 @@ app.set('port', process.env.PORT || 4000);
 
 //Middlewares
 app.use(cors({
-    origin: ["https://whalefare.netlify.app", "https://whalefare1.herokuapp.com"],
+    origin: ["https://whalefare.netlify.app", "https://whalefare1.herokuapp.com", "http://localhost:3000"],
     methods: ["GET", "POST", "DELETE", "PUT"],
     credentials: true
 }));
@@ -42,7 +42,9 @@ app.use(flash());
 //Rutas
 app.use(require('./routes'));
 app.use(require('./routes/auth'));
+app.use(require('./routes/creditcards'));
 app.use(require('./routes/passwords'));
+app.use(require('./routes/notes'));
 
 //Variables globales
 app.use((req, res, next) => {

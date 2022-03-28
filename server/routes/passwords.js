@@ -6,7 +6,7 @@ const pool = require('../database');
 
 const { encrypt, decrypt } = require('../Encryption');
 
-//Envío de correo
+//Envío de correo - verificación
 
 const correo = (url, email) => {
     console.log(email)
@@ -69,7 +69,7 @@ router.post('/jwtauth/:id', async (req, res) => {
     }
 });
 
-//Correo para permitir el acceso a readauth
+//JWT check
 
 router.get("/authorization/:token", (req, res) => {
     console.log("Llegamos a authorization :D")
@@ -83,6 +83,7 @@ router.get("/authorization/:token", (req, res) => {
                     req.userId = decoded.id
                     await pool.query('UPDATE user set ? WHERE id_u = ?', [{ authorized_u: true }, req.userId]);
                     console.log(req.userId)
+                    //res.redirect('https://whalefare.netlify.app/home')
                 }
             })
         }
