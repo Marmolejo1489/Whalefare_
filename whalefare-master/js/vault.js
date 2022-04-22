@@ -1,0 +1,113 @@
+var vaultdb = new PouchDB('vault');
+//var remoteCouch = 'http://127.0.0.1:9000/_utils/vault';
+
+//funciones para cifrar el nombre de usuario y la contraseña
+var encrypt = function(str, key) {
+  return "" + CryptoJS.AES.encrypt(str, key);
+};
+
+var decrypt = function(str, key) {
+  return CryptoJS.AES.decrypt(str, key).toString(CryptoJS.enc.Utf8).toString(CryptoJS.enc.Utf8);
+};
+
+//escribir los datos encriptados en la bd
+var vaultWrite = function(doc, encryptionKey, callback) {
+  doc.username = encrypt(doc.username, encryptionKey);
+  doc.password = encrypt(doc.password, encryptionKey);
+
+  //console.log(doc.username);
+  //console.log(doc.password);
+
+  if (doc._id) {
+    vaultdb.get(doc, function(err, data) {
+      if (!err) {
+        doc._rev = data._rev;
+      }
+      vaultdb.put(doc, callback);
+    });
+  } else {
+    vaultdb.post(doc, callback);
+  }
+};
+
+var vaultRead = function(id, encryptionKey, callback) {
+  vaultdb.get(id, function(err, doc) {
+    if (err) return callback(err, null);
+    doc.username = decrypt(doc.username, encryptionKey);
+    doc.password = decrypt(doc.password, encryptionKey);
+    callback(null, doc)
+  });
+};
+
+//se descifran los datos de la url a la que pertenecen
+var preprocessSearchResults = function(data, encryptionKey) {
+  var retval = [];
+  if (data && data.rows && data.rows.length > 0) {
+    for(var i in data.rows) {
+      data.rows[i].doc.username = decrypt(data.rows[i].doc.username, encryptionKey);
+      data.rows[i].doc.password = decrypt(data.rows[i].doc.password, encryptionKey);
+      if (!data.rows[i].doc.notes) {
+        data.rows[i].doc.notes="";
+      }
+      retval.push(data.rows[i].doc)
+    }
+  } 
+  return retval
+}
+
+//se filtra por la url
+var vaultFilter = function(domain, encryptionKey, callback) {
+  var fun = function(doc) {
+    if (!doc.deleted) {
+      emit(doc.domain, null);
+    }
+  };
+  vaultdb.query(fun, { key:domain, include_docs: true }, function(err, data) {
+    var retval = preprocessSearchResults(data, encryptionKey);
+    callback(err, retval);
+  });
+};
+
+//tamaño de la bd
+var vaultSize = function(callback) {
+  
+  var fun = function(doc) {
+    if (typeof doc.deleted == "undefined" && doc._id != 'verify') {
+      emit(null, 1);
+    }
+  };
+  vaultdb.query({map:fun, reduce: "_count"}, {  }, function(err, data) {
+    if (!err && data && data.rows && data.rows.length == 1) {
+      console.log("count", data.rows[0].value);
+      callback(null, data.rows[0].value);
+    } else {
+      callback(null, 0)
+    }
+  });
+};
+
+//eliminar un dato de la bd
+var vaultRemove = function(id, rev, callback) {
+  vaultdb.get(id, function(err, doc) {
+    if (err) return callback(err, null);
+    // se marca como eliminado
+    doc.deleted=true;
+    vaultdb.put(doc,callback);
+  });
+};
+
+var vaultSearch = function(searchterm, encryptionKey, callback) {
+  vaultdb.search({
+    query: searchterm,
+    fields: ['domain', 'isuer', 'ipass', 'notes'], //
+    include_docs: true,
+    filter: function (doc) {
+      return doc.deleted !== true;
+    }
+  }, function(err, data) {
+    console.log("search", err, data);
+    var retval = preprocessSearchResults(data, encryptionKey);
+    callback(err, retval);
+    
+  });
+};

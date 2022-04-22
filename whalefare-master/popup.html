@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Inicio Popup</title>
+
+    <link rel="stylesheet" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/style.css" />
+    
+    <script src="js/jquery-2.1.4.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/clipboard.min.js"></script>
+    <script src="js/pouchdb-5.1.0.min.js"></script>
+    <script src="js/underscore-min.js"></script>
+    <script src="js/aes.js"></script>
+    <script src="js/pouchdb.quick-search.js"></script>
+    <script src="js/pbkdf2.js"></script>
+
+    <script src="js/session.js"></script>
+    <script src="js/vault.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/templates.js"></script>
+    <script src="js/main.js"></script>
+
+  </head>
+  <body>
+    <div id="topnav" class="navbar navbar-default nav-links navbar-fixed-top">
+      <div class="container">
+          <span class="mini-navbar navbar-brand">Whalefare Extension <span id="vaultsizebadge" class="badge"></span></span>
+          <ul class="nav navbar-nav">
+              <li><a id="addbutton" href="#" style="outline: none"><span style="font-size:20px" class="glyphicon glyphicon-plus" aria-hidden="true"></span></a></li>
+              <li><a id="autofillbutton" href="#" style="outline: none"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bookmark-check-fill" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M2 15.5V2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.74.439L8 13.069l-5.26 2.87A.5.5 0 0 1 2 15.5zm8.854-9.646a.5.5 0 0 0-.708-.708L7.5 7.793 6.354 6.646a.5.5 0 1 0-.708.708l1.5 1.5a.5.5 0 0 0 .708 0l3-3z"/>
+              </svg></a></li>
+              <li><a id="logoutbutton" href="#" style="outline: none"><span style="font-size:20px" class="glyphicon glyphicon-off" aria-hidden="true"></span></a></li>
+          </ul>
+      </div>
+    </div>
+    
+    <div id="status">
+      
+    </div>
+    
+    <div class="modal fade" id="addmodal">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Nueva Contraseña</h4>
+          </div>
+          <div class="modal-body">
+            <form id="addform">
+              <div class="form-group">
+                <label for="url">URL del Sitio Web</label>
+                <input type="url" class="form-control" id="url" placeholder="URL" required readonly>
+              </div>
+              <div class="form-group">
+                <label for="username">Usuario</label>
+                <input type="text" class="form-control" id="username" placeholder="Username" required>
+              </div>
+              <div class="form-group">
+                <label for="password">Contraseña</label>
+                <input type="password" class="form-control" id="password" placeholder="Password" required>
+              </div>
+              <div class="form-group">
+                <label for="notes">Input User</label>
+                <input type="text" class="form-control" id="iuser" value="">
+              </div>
+              <div class="form-group">
+                <label for="notes">Input Password</label>
+                <input type="text" class="form-control" id="ipass" value="">
+              </div>
+              <div class="form-group">
+                <label for="notes">Notas</label>
+                <input type="text" class="form-control" id="notes" placeholder="Notes">
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+            <button type="button" id="addmodalbutton" class="btn btn-primary">Agregar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="modal" id="loginmodal">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Login</h4>
+          </div>
+          <div class="modal-body">
+            <form id="loginform">
+              <div id="loginalert" class="alert"></div>
+              <div class="form-group">
+                <label for="password">Contraseña</label>
+                <input type="password" class="form-control" id="loginpassword" placeholder="">
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" id="loginmodalbutton" class="btn btn-primary">Iniciar Sesión</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="js/content.js"></script>
+  </body>
+  
+</html>
