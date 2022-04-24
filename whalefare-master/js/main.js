@@ -89,7 +89,7 @@ var showLoginPanel = function() {
   
   $('#loginpassword').val("");
   
-  $('#loginalert').html("Por favor, ingresa una contraseña. Con esta, podrás iniciar sesión y acceder a tu bóveda de contraseñas.");
+  $('#loginalert').html("Ingresa una contraseña para poder acceder a tu bóveda.");
   $('#loginalert').removeClass("alert-danger");
   $('#loginalert').addClass("alert-info");
   
