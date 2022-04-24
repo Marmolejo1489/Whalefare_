@@ -4,7 +4,7 @@
     chrome.tabs.update(sender.tab.id, {url: request.redirect});
 });*/
 
-chrome.runtime.onMessage.addListener(
+/*chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
         try{
             //var nuser = request.iuser;
@@ -18,7 +18,7 @@ chrome.runtime.onMessage.addListener(
             sendResponse({status: "Error..."});
         }
     }
-)
+)*/
 
 /*document.getElementById('autofillbutton').addEventListener('click', () => {
     getCurrentTabUrl(function(err, url) {
