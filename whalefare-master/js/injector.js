@@ -1,4 +1,4 @@
-fetch(`${value}`).then(function (response) {
+/*fetch(`${value}`).then(function (response) {
     let user = value;
 }).then(function (user) {
     fillforms(user);
@@ -8,7 +8,7 @@ fetch(`${value}`).then(function (response) {
 });
 
 function fillforms(value){
-    var username = document.querySelector('input[name="email"]');
+    var username = document.querySelector(`input[name="email"]`);
     fillField(username, value);
 }
 
@@ -16,4 +16,4 @@ function fillField(field, value){
     if(field){
         field.value = value;
     }
-}
+}*/
