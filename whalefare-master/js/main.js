@@ -17,24 +17,14 @@ var renderDocumentList = function(data, searchtxt) {
     } else {
 
       // se renderiza como una tabla con las contraseñas
+
       var html = '<table class="table">';
       html += matchRowHeader({});
       for(var i in data) {
-        //if (data[i].username.length > 12 && data[i].iuser.length > 12 && data[i].ipass.length > 12 && data[i].password.length > 20) {
-        if (data[i].username.length > 12 && data[i].password.length > 20) {
-          let user = data[i].displayUsername = data[i].username.substring(0,15) + "...";
-          //let pass = data[i].displayPassword = data[i].password.substring(0,15) + "...";
-          //console.log(user);
-          //console.log(pass);
-          //data[i].displayIuser = data[i].iuser.substring(0,15) + "...";
-          //data[i].displayIpass = data[i].ipass.substring(0,15) + "...";
+        if (data[i].username.length > 12) {
+          data[i].displayUsername = data[i].username.substring(0,15) + "...";
         } else {
-          let user = data[i].displayUsername = data[i].username;
-          //let pass = data[i].displayPassword = data[i].password;
-          //data[i].displayIuser = data[i].iuser;
-          //data[i].displayIpass = data[i].ipass;
-          //console.log(user);
-          //console.log(pass);
+          data[i].displayUsername = data[i].username;
         }
         html += matchRowTemplate(data[i]);
       }
@@ -151,8 +141,6 @@ $( document ).ready(function() {
       domain: "",
       username: $('#username').val(),
       password: $('#password').val(),
-      iuser: $('#iuser').val(),
-      ipass: $('#ipass').val(),
       notes: $('#notes').val()
     }
     doc.domain = extractDomainName(doc.url);
@@ -215,6 +203,4 @@ $( document ).ready(function() {
   
   });
   
-  
-
 });
