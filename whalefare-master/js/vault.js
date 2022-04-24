@@ -15,9 +15,6 @@ var vaultWrite = function(doc, encryptionKey, callback) {
   doc.username = encrypt(doc.username, encryptionKey);
   doc.password = encrypt(doc.password, encryptionKey);
 
-  //console.log(doc.username);
-  //console.log(doc.password);
-
   if (doc._id) {
     vaultdb.get(doc, function(err, data) {
       if (!err) {
@@ -99,7 +96,7 @@ var vaultRemove = function(id, rev, callback) {
 var vaultSearch = function(searchterm, encryptionKey, callback) {
   vaultdb.search({
     query: searchterm,
-    fields: ['domain', 'isuer', 'ipass', 'notes'], //
+    fields: ['domain', 'notes'],
     include_docs: true,
     filter: function (doc) {
       return doc.deleted !== true;
