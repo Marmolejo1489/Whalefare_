@@ -47,3 +47,11 @@ body {
 .deletebutton {
   font-size:8px;
 }
+
+.table{
+  text-align: center;
+}
+
+.header{
+  text-align: center;
+}
