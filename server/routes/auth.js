@@ -82,18 +82,24 @@ router.post('/login', async (req, res, next) => {
                 failureFlash: true,
             }, function () {
                 console.log("User en login passport auth->", req.session.user)
-                res.send({ isLogged: req.session.isLogged, id: req.session.user.id_u });
+                res.send({ isLogged: req.session.isLogged, id: array[0].id_u });
             })(req, res, next);
 
         } else {
             const id = array[0].id_u;
             const token = jwt.sign({ id }, "jwtVerification", {
+                /*
+                Eliminamos la caducidad de la cookie.
                 expiresIn: 600
+                */
             })
             res.cookie('verificationtoken', token, {
                 secure: true,
                 httpOnly: true,
-                maxAge: 10 * 60 * 1000,
+                /*
+                Eliminamos la caducidad de la cookie.
+                    maxAge: 10 * 60 * 1000,
+                */
             })
             req.session.jwt = token;
             const url = ("https://whalefare1.herokuapp.com/confirmation/" + token)
@@ -107,8 +113,6 @@ router.post('/login', async (req, res, next) => {
         res.send({ loggedIn: false, message: 'email', verified: false });
     }
 });
-
-
 
 //Función - Cierre de sesión
 
@@ -249,5 +253,92 @@ router.put('/profileedit/:id_u', async (req, res) => {
         return { message: 'password' }
     }
 });
+
+//Correo cambio de contraseña
+const correopassword = (url, email, name) => {
+    console.log(email)
+    var transporter = nodemailer.createTransport({
+        host: 'smtp.gmail.com',
+        port: 465,
+        secure: true,
+        auth: {
+            user: 'carapiaaguilar.krishna@gmail.com',
+            pass: 'Krishna01.'
+        },
+    })
+
+    var mailOptions = {
+        from: '"Whalefare" <carapiaaguilar.krishna@gmail.com>',
+        to: email,
+        subject: 'Cambio de contraseña',
+        html: 'Hola:<br>Parece que has solicitado un cambio de contraseña para tu cuenta ' + name + ' de Whalefare. No te preocupes. Puedes cambiar tu contraseña haciendo clic <a href="' + url + '" target="_blank">aquí<a>.'
+    }
+    transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            console.log("El email no se envió", error)
+        } else {
+            console.log("email enviado")
+        }
+    })
+}
+
+//Cambiar contraseña - enlace del correo
+router.put("/changepassword/:string", async (req, res) => {
+
+    const { string } = req.params;
+    let { password } = req.body;
+    const pass_u = await helpers.encryptPassword(password)
+    const id_u = string.slice(40)
+    newPassword = {
+        pass_u
+    }
+    console.log("id ->" + id_u, "  contraseña ->" + newPassword.pass_u)
+    if (id_u.length > 1) {
+        const user = await pool.query('SELECT * FROM user WHERE id_u = ' + [id_u])
+        if (user[0]) {
+            await pool.query('UPDATE user SET ? WHERE id_u = ?', [newPassword, id_u])
+            res.send({ message: true })
+        } else {
+            res.send({ message: false })
+        }
+    } else {
+        res.send({ message: false })
+    }
+
+})
+
+//Cambiar contraseña - petición
+router.post("/passwordemail/", async (req, res) => {
+    //Nada más para confundir xdd
+    function random(length) {
+        var result = '';
+        var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        var charactersLength = characters.length;
+        for (var i = 0; i < length; i++) {
+            result += characters.charAt(Math.floor(Math.random() * charactersLength));
+        }
+        return result;
+    }
+
+    const email_u = req.body.email
+    const randomstring = random(40)
+    try {
+        const user = await pool.query('SELECT * FROM user WHERE email_u = ?', [email_u]);
+        //En caso de que el correo no esté registrado.
+
+        if (user[0]) {
+            const url = "http://localhost:3000/password/" + randomstring + user[0].id_u
+            correopassword(url, user[0].email_u, user[0].user_u)
+            console.log('Envío del correo completo ' + user[0].user_u + url)
+            res.send({ message: true })
+        } else {
+            res.send({ message: false })
+        }
+    } catch (e) {
+        console.log('No se completó el envío del correo ' + e)
+    }
+})
+
+
 
 module.exports = router;

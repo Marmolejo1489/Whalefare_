@@ -53,7 +53,7 @@ router.post('/readcard', async (req, res) => {
         authorized[0].authorized_u === 1 
         para deploy
         */
-    if (1 === 1) {
+    if (authorized[0].authorized_u === 1) {
         /*
         descomentar para deploy
         */
@@ -68,7 +68,7 @@ router.post('/readcard', async (req, res) => {
     } else {
         console.log("False en creditcard /read")
         /*
-        pool.query("SELECT number_t FROM password WHERE id_u = ?", [id_u],
+        pool.query("SELECT number_t FROM creditcard WHERE id_u = ?", [id_u],
             (err, result) => {
                 if (err) {
                     console.log(err);

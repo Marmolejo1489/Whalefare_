@@ -23,11 +23,16 @@ passport.use('local.login', new LocalStrategy({
             const id = array[0].id_u;
             console.log(id)
             const token = jwt.sign({ id }, "jwtSecret", {
+                /*
+                Eliminamos la caducidad de la cookie.
                 expiresIn: 600
+                */
             })
             req.session.jwtsecret = token;
+            /*
+            Eliminamos la caducidad de la cookie.
             req.session.cookie.expires = 600000
-
+            */
             done(null, user, { message: 'Bienvenido ' + user.user_u });
         } else {
             console.log("Contraseña incorrecta")
