@@ -1,8 +1,8 @@
-var matchRowHeader = _.template('<tr><th>Sitio Web</th><th>Usuario</th><th>Contraseña</th><th>Eliminar</th></tr>\n');
+var matchRowHeader = _.template('<tr><th class="header">Sitio Web</th><th class="header">Usuario</th><th class="header">Contraseña</th><th class="header">Eliminar</th></tr>\n');
 
 var matchRowTemplate = _.template('<tr>\n' + 
                                   '  <td><a href="<%= url %>" target="_new" title="<%= notes %>"><%= domain %></a></td>\n'+
-                                  '  <td id="username"><%= displayUsername %></td>\n'+  
+                                  '  <td><%= displayUsername %></td>\n'+
                                   '  <td><button class="clippy btn btn-warning btn-xs" data-clipboard-text="<%= password %>">Copiar</button></td>\n'+
                                   '  <td><button class="deletebutton btn btn-danger btn-xs" data-id="<%= _id %>" data-rev="<%= _rev %>">X</button>\n'+
                                   '  </td>\n'+                               
