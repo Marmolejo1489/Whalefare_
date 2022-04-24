@@ -1,4 +1,4 @@
-// extract a domain name from a URL / se extrae el nombre del dominio de una url
+// se extrae el nombre del dominio de una url
 var extractDomainName = function(url) {
   var domain = url;
   domain = domain.replace(/https?:\/\//,"");
@@ -6,7 +6,7 @@ var extractDomainName = function(url) {
   return domain;  
 };
 
-// get the currently seleted Chrome tab / para identificar la pestaña activa
+//  para identificar la pestaña activa
 var getCurrentTabUrl = function(callback) {
   chrome.tabs.getSelected(null,function(tab) {
     callback(null, tab.url);
