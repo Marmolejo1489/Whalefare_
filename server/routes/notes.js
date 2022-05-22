@@ -115,17 +115,6 @@ router.delete('/deletenote/:id_n', async (req, res) => {
     await pool.query('DELETE FROM note WHERE id_n = ?', [id_n]);
 });
 
-
-/*Función - Desencriptar
-router.post('/decryptpass', (req, res) => {
-    const pass = {
-        iv: req.body.iv,
-        password: req.body.password
-    }
-    res.send(decrypt(pass));
-});
-*/
-
 /*
 Categorías
 */

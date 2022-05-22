@@ -14,6 +14,7 @@ const correo = (url, email) => {
         host: 'smtp.gmail.com',
         port: 465,
         secure: true,
+        service: 'gmail',
         auth: {
             user: 'carapiaaguilar.krishna@gmail.com',
             pass: 'Krishna01.'
@@ -161,7 +162,6 @@ router.get('/jwt', (req, res) => {
                 req.userId = decoded.id
                 console.log("id del usuario ->", req.userId)
                 res.send({ isAuth: true, id: req.userId })
-                next();
             }
         })
     } else {
@@ -261,17 +261,23 @@ const correopassword = (url, email, name) => {
         host: 'smtp.gmail.com',
         port: 465,
         secure: true,
+        service: 'gmail',
         auth: {
             user: 'carapiaaguilar.krishna@gmail.com',
             pass: 'Krishna01.'
         },
     })
 
+    const correo = 'Hola:<br>Parece que has solicitado un cambio de contraseña de la cuenta asociada al correo ' + name + '. Si fuiste tú, haz clic <a href="' + url + '" target="_blank">aquí<a> para cambiar tu contraseña;<br> si no, quizá deberías asegurarte de que no haya problemas en el paraíso.<br>Saludos cordiales, Krishna.' +
+        + '<br><br>¿Problemas con el vínculo?'
+        + 'Accede aquí: ' + url + '.'
+
     var mailOptions = {
         from: '"Whalefare" <carapiaaguilar.krishna@gmail.com>',
         to: email,
         subject: 'Cambio de contraseña',
-        html: 'Hola:<br>Parece que has solicitado un cambio de contraseña para tu cuenta ' + name + ' de Whalefare. No te preocupes. Puedes cambiar tu contraseña haciendo clic <a href="' + url + '" target="_blank">aquí<a>.'
+        html: correo
+
     }
     transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
@@ -327,7 +333,7 @@ router.post("/passwordemail/", async (req, res) => {
         //En caso de que el correo no esté registrado.
 
         if (user[0]) {
-            const url = "http://localhost:3000/password/" + randomstring + user[0].id_u
+            const url = "https://whalefare.netlify.app/password/" + randomstring + user[0].id_u
             correopassword(url, user[0].email_u, user[0].user_u)
             console.log('Envío del correo completo ' + user[0].user_u + url)
             res.send({ message: true })

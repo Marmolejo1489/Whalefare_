@@ -53,7 +53,7 @@ router.post('/readcard', async (req, res) => {
         authorized[0].authorized_u === 1 
         para deploy
         */
-    if (authorized[0].authorized_u === 1) {
+    if (1 === 1) {
         /*
         descomentar para deploy
         */
@@ -66,7 +66,7 @@ router.post('/readcard', async (req, res) => {
                 }
             });
     } else {
-        console.log("False en creditcard /read")
+        console.log("False en creditcard /read creditcards.js")
         /*
         pool.query("SELECT number_t FROM creditcard WHERE id_u = ?", [id_u],
             (err, result) => {
@@ -79,16 +79,6 @@ router.post('/readcard', async (req, res) => {
             */
     }
 });
-
-/*Función - Desencriptar
-router.post('/decryptpass', (req, res) => {
-    const pass = {
-        iv: req.body.iv,
-        password: req.body.password
-    }
-    res.send(decrypt(pass));
-});
-*/
 
 //Función - Editar
 router.put('/editcard/:id_t', async (req, res) => {
