@@ -57,6 +57,34 @@ router.post('/signup', (req, res, next) => {
     }
 });
 
+//Función - Registro de usuario
+
+router.post('/signupmobile', async (req, res, next) => {
+    console.log('Acceso concedido')
+    console.log(req.body)
+    console.log(req.params)
+    try {
+        const array = await pool.query('SELECT id_u FROM user WHERE email_u = ?', [req.body.email]);
+        if (array[0]) {
+            console.log('Correo usado')
+            return ({ message: 'Correo usado' });
+        } else {
+            const newUser = {
+                user_u: req.body.username,
+                pass_u: req.body.password,
+                email_u: req.body.email,
+                verified_u: true
+            };
+            newUser.pass_u = await helpers.encryptPassword(req.body.password);
+            await pool.query('INSERT INTO user set ?', [newUser]);
+            res.send({ loggedIn: true });
+
+        }
+    } catch (e) {
+        console.log(e)
+    }
+});
+
 //Función - Comprobación de sesión
 
 router.get('/login', (req, res) => {
@@ -97,16 +125,38 @@ router.post('/login', async (req, res, next) => {
             res.cookie('verificationtoken', token, {
                 secure: true,
                 httpOnly: true,
-                /*
-                Eliminamos la caducidad de la cookie.
-                    maxAge: 10 * 60 * 1000,
-                */
+                maxAge: 10 * 60 * 1000,
+
             })
             req.session.jwt = token;
             const url = ("https://whalefare1.herokuapp.com/confirmation/" + token)
 
             correo(url, req.body.email);
 
+            console.log("No estás verificado")
+            res.send({ loggedIn: false, message: 'unverified' });
+        }
+    } else {
+        res.send({ loggedIn: false, message: 'email', verified: false });
+    }
+});
+
+//Función - Inicio de sesión móvil
+
+router.post('/loginmobile', async (req, res, next) => {
+    console.log('Acceso concedido')
+    const array = await pool.query('SELECT id_u, verified_u, pass_u FROM user WHERE email_u = ?', [req.body.email]);
+    let user = array[0];
+    console.log(user)
+    console.log("Respuesta del query login ->", array)
+    if (array[0]) {
+        if (array[0].verified_u === 1) {
+            console.log('Diferente de null');
+            if (helpers.matchPassword(req.body.password, user.pass_u)) {
+                res.send({ loggedIn: true, userId: user.id_u });
+            }
+        } else {
+            const id = array[0].id_u;
             console.log("No estás verificado")
             res.send({ loggedIn: false, message: 'unverified' });
         }
@@ -138,6 +188,7 @@ router.get('/profile/:id_u', async (req, res) => {
     const id = req.params.id_u
     if (id !== 0) {
         const user = await pool.query('SELECT email_u, user_u from user WHERE id_u = ?', [id]);
+        console.log(user)
         res.send({ loggedIn: true, user: { email: user[0].email_u, user: user[0].user_u } });
     } else {
         res.send({ loggedIn: false });
